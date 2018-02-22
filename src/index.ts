@@ -47,3 +47,61 @@ export const add = (p: Complex, q: Complex): Complex => {
 export const sub = (p: Complex, q: Complex): Complex => {
   return rect(real(p) - real(q), imag(p) - imag(q));
 };
+
+export const mul = (p: Complex, q: Complex): Complex => {
+  const {mag: a, tan: b} = p;
+  const {mag: c, tan: d} = q;
+
+  const absb = Math.abs(b);
+  const absd = Math.abs(d);
+
+  const tan = (
+      (absb === 0)
+    ? d
+    : (absd === 0)
+    ? b
+    : (absb <= 1 && absd <= 1)
+    ? (b + d) / (1 - b * d)
+    : (absb > 1 && absd <= 1)
+    ? (1 + d / b) / (1 / b - d)
+    : (absb <= 1 && absd > 1)
+    ? (b / d + 1) / (1 / d - b)
+    : (1 / d + 1 / b) / ((1 / b) * (1 / d) - 1)
+  );
+
+  const mag = a * c * ((
+    (b > 0 && d > 0 && tan <= 0) ||
+    (b < 0 && d < 0 && tan >= 0)
+  ) ? -1 : 1);
+
+  return complex(mag, tan);
+};
+
+export const div = (p: Complex, q: Complex): Complex => {
+  const {mag: a, tan: b} = p;
+  const {mag: c, tan: d} = q;
+
+  const absb = Math.abs(b);
+  const absd = Math.abs(d);
+
+  const tan = (
+      (absb === 0)
+    ? -d
+    : (absd === 0)
+    ? b
+    : (absb <= 1 && absd <= 1)
+    ? (b - d) / (1 + b * d)
+    : (absb > 1 && absd <= 1)
+    ? (1 - d / b) / (1 / b + d)
+    : (absb <= 1 && absd > 1)
+    ? (b / d - 1) / (1 / d + b)
+    : (1 / d - 1 / b) / ((1 / b) * (1 / d) + 1)
+  );
+
+  const mag = a / c * ((
+    (b > 0 && d < 0 && tan <= 0) ||
+    (b < 0 && d > 0 && tan >= 0)
+  ) ? -1 : 1);
+
+  return complex(mag, tan);
+};
