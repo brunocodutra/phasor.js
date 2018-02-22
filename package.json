@@ -1,0 +1,48 @@
+{
+  "name": "phasor.js",
+  "version": "1.0.0",
+  "description": "Complex numbers done right",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "webpack --mode production",
+    "test": "tsc --noEmit -p spec/ && jest --no-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunocodutra/phasor.js.git"
+  },
+  "keywords": [
+    "complex",
+    "imaginary",
+    "math",
+    "polar",
+    "phasor",
+    "rectangular",
+    "numeric"
+  ],
+  "author": "Bruno Dutra <brunocodutra@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunocodutra/phasor.js/issues"
+  },
+  "homepage": "https://github.com/brunocodutra/phasor.js#readme",
+  "side-effects": false,
+  "devDependencies": {
+    "@babel/core": "7.0.0-beta.40",
+    "@babel/polyfill": "7.0.0-beta.40",
+    "@babel/preset-env": "7.0.0-beta.40",
+    "@types/jest": "22.1.3",
+    "@types/jest-matcher-utils": "21.0.1",
+    "babel-loader": "8.0.0-beta.0",
+    "jest": "22.4.1",
+    "ts-jest": "22.0.4",
+    "ts-loader": "4.0.0-beta.0",
+    "typescript": "2.7.2",
+    "webpack": "4.0.0-beta.2",
+    "webpack-cli": "2.0.6"
+  }
+}

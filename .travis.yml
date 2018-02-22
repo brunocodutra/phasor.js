@@ -1,0 +1,44 @@
+language: node_js
+node_js: node
+
+git:
+  depth: 1
+
+env:
+  global:
+    secure: Bw4vs5JopcyYnhPfajhzbzAs2pMrF2DWoa9RZ7Q5tktcN6BbCAJXCLImphMiLTqEI9N8CFNKHdku0UgXqA17SU1UQnjWkSMVgJTG5doFfBxQYE3Ul5bCBaRNMgcg9ctVxZ8oUpb6S2hoxj+R2kisYVbWkfqK5tPA18fsGcAu7ml78hj4Jqv4vWyac2FLSrcPfePNdYJ82qfllKnZ264BAGSRVJEQIwlYc6kPAZP2GQgiXDv/waLQCKmd2Nqaa1bVB9IoYXxFB94Qto2auUgzn1pLnfJ2sESP8B4yzPqvGv6rzAVoTi/DKuolueWO2woZonaiXcCuewAA+FAkrBr1pxdR7MWhZLFrw3h2mEhUOA/XmEUhgNN37y+tD57VwIKt7sKFn4Dugs8jKZP75e+sv45HHvZ5OgTdsN5x5VMucTmFg6p647QFY6+QmemLqplkCAsqxsGJBf50sbta1L/0W4RDi+gDp/PWTZN3q9ttdHcA7Mcys45wdBwEn/GbCBaPErKM8cUGF0HzVtvi9na8R/3t5rtlcIjeODpOxwgzfcGWWGmiTtFSH8frFl9IB4m++AUZJpyMU/+nf7cOmGNwsJHBjFT9In/yAOelaUYq3byhA9c+9t/9xB/MC4kWNH6IQwgCgg/24x6GYTW5kPhw5L41xumsKSYPEbz7hr1LAc0=
+
+jobs:
+  include:
+  - os: osx
+    stage: test
+
+  - os: linux
+    stage: test
+
+  - stage: deploy
+    script: npm run build
+
+  - stage: deploy
+    if: type = pull_request
+    script:
+    - |
+      if [[ -n $(git diff --name-only package-lock.json) ]]
+      then
+        git config credential.helper "store --file=.git/credentials" || exit $?
+        echo "https://${GH_TOKEN}:@github.com" 2> /dev/null > .git/credentials || exit $?
+        git remote set-url origin https://github.com/$TRAVIS_REPO_SLUG.git || exit $?
+        git add package-lock.json || exit $?
+        git commit -m "update package-lock.json" || exit $?
+        git push origin HEAD:$TRAVIS_PULL_REQUEST_BRANCH &> /dev/null || exit $?
+      fi
+
+install:
+- travis_retry npm install
+
+before_script:
+- git config --global user.name "Travis Bot"
+- git config --global user.email "\<\>"
+
+script:
+- npm test
