@@ -3,11 +3,15 @@ export type Complex = {
   readonly tan: number,
 };
 
+export type Phasor = Complex;
+
 export const isComplex = (p: any): p is Complex => (
   typeof p === 'object' &&
   'mag' in p && typeof p.mag === 'number' &&
   'tan' in p && typeof p.tan === 'number'
 );
+
+export const isPhasor = isComplex;
 
 const complex = (mag: number, tan: number): Complex => ({
   mag: isNaN(tan) ? NaN : mag,
