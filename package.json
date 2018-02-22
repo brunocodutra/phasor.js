@@ -1,0 +1,34 @@
+{
+  "name": "phasor.js",
+  "version": "1.0.0",
+  "description": "Complex numbers done right",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunocodutra/phasor.js.git"
+  },
+  "keywords": [
+    "complex",
+    "imaginary",
+    "math",
+    "polar",
+    "phasor",
+    "rectangular",
+    "numeric"
+  ],
+  "author": "Bruno Dutra <brunocodutra@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunocodutra/phasor.js/issues"
+  },
+  "homepage": "https://github.com/brunocodutra/phasor.js#readme",
+  "side-effects": false,
+  "devDependencies": {
+  }
+}
