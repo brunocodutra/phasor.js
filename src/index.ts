@@ -105,3 +105,23 @@ export const div = (p: Complex, q: Complex): Complex => {
 
   return complex(mag, tan);
 };
+
+export const sinh = (p: Complex): Complex => {
+  const a = real(p);
+  const b = imag(p);
+
+  const sinb = Math.sin(b);
+  const cosb = Math.cos(b);
+
+  return rect(cosb && (cosb * Math.sinh(a)), sinb && (sinb * Math.cosh(a)));
+};
+
+export const cosh = (p: Complex): Complex => {
+  const a = real(p);
+  const b = imag(p);
+
+  const sinb = Math.sin(b);
+  const cosb = Math.cos(b);
+
+  return rect(cosb && (cosb * Math.cosh(a)), sinb && (sinb * Math.sinh(a)));
+};
