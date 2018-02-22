@@ -39,3 +39,11 @@ export const imag = (p: Complex): number => Math.sign(p.tan) * real({mag: p.mag,
 
 export const neg = (p: Complex): Complex => complex(-p.mag, p.tan);
 export const conj = (p: Complex): Complex => complex(p.mag, -p.tan);
+
+export const add = (p: Complex, q: Complex): Complex => {
+  return rect(real(p) + real(q), imag(p) + imag(q));
+};
+
+export const sub = (p: Complex, q: Complex): Complex => {
+  return rect(real(p) - real(q), imag(p) - imag(q));
+};
