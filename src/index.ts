@@ -28,3 +28,8 @@ export const rect = (re: number, im = 0): Complex => complex(
   (re < 0) ? -Math.hypot(re, im) : Math.hypot(re, im),
   (Math.abs(re) === Math.abs(im)) ? Math.sign(im * re) : (re === 0) ? im / 0 : im / re,
 );
+
+export const norm = (p: Complex): number => Math.abs(p.mag);
+export const angle = (p: Complex): number => Math.atan(p.tan) + (
+  (p.mag < 0) ? (p.tan > 0) ? -Math.PI : Math.PI : 0
+);
