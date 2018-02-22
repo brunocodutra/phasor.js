@@ -36,3 +36,6 @@ export const angle = (p: Complex): number => Math.atan(p.tan) + (
 
 export const real = (p: Complex): number => (1 / p.tan) && (p.mag / Math.hypot(1, p.tan));
 export const imag = (p: Complex): number => Math.sign(p.tan) * real({mag: p.mag, tan: 1 / p.tan});
+
+export const neg = (p: Complex): Complex => complex(-p.mag, p.tan);
+export const conj = (p: Complex): Complex => complex(p.mag, -p.tan);
