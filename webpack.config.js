@@ -1,6 +1,8 @@
 module.exports = {
   output: {
     filename: 'index.js',
+    libraryTarget: 'umd',
+    globalObject: 'this', // FIXME: https://github.com/webpack/webpack/issues/6522
   },
 
   resolve: {
