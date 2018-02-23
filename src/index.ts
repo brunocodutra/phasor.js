@@ -33,6 +33,8 @@ export const rect = (re: number, im = 0): Complex => complex(
   (Math.abs(re) === Math.abs(im)) ? Math.sign(im * re) : (re === 0) ? im / 0 : im / re,
 );
 
+export const i = (im = 1) => rect(0, im);
+
 export const norm = (p: Complex): number => Math.abs(p.mag);
 export const angle = (p: Complex): number => Math.atan(p.tan) + (
   (p.mag < 0) ? (p.tan > 0) ? -Math.PI : Math.PI : 0
