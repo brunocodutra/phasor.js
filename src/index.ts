@@ -110,22 +110,8 @@ export const div = (p: Complex, q: Complex): Complex => {
   return complex(mag, tan);
 };
 
-export const sinh = (p: Complex): Complex => {
-  const a = real(p);
-  const b = imag(p);
+export const exp = (p: Complex): Complex => polar(Math.exp(real(p)), imag(p));
+export const log = (p: Complex): Complex => rect(Math.log(norm(p)), angle(p));
 
-  const sinb = Math.sin(b);
-  const cosb = Math.cos(b);
-
-  return rect(cosb && (cosb * Math.sinh(a)), sinb && (sinb * Math.cosh(a)));
-};
-
-export const cosh = (p: Complex): Complex => {
-  const a = real(p);
-  const b = imag(p);
-
-  const sinb = Math.sin(b);
-  const cosb = Math.cos(b);
-
-  return rect(cosb && (cosb * Math.cosh(a)), sinb && (sinb * Math.sinh(a)));
-};
+export const sinh = (p: Complex): Complex => div(sub(exp(p), exp(neg(p))), rect(2));
+export const cosh = (p: Complex): Complex => div(add(exp(p), exp(neg(p))), rect(2));

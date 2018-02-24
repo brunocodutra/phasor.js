@@ -1,13 +1,13 @@
-import {angle, div, norm, rect, sinh, sub} from 'index';
+import {div, polar, rect, sinh, sub} from 'index';
 
 import {samples} from './util';
 
 describe('Complex', () => {
   it('should have a hyperbolic sine', () => {
-    samples.forEach(({real, imag, mag}) => {
+    samples.forEach(({mag, ang}) => {
       if (isFinite(mag)) {
-        const s = rect(real, imag);
-        const u = rect(Math.log(norm(s)), angle(s));
+        const s = polar(mag, ang);
+        const u = rect(Math.log(mag), ang);
         const r = sub(div(s, rect(2)), div(rect(0.5), s));
         expect(sinh(u)).toBeCloseTo(r);
       }
