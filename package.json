@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "webpack --mode production",
-    "test": "tsc --noEmit -p spec/ && jest --no-cache"
+    "test": "tsc --noEmit -p spec/ && jest --no-cache",
+    "example": "node example/index.js"
   },
   "repository": {
     "type": "git",
