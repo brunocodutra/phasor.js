@@ -25,6 +25,7 @@ jobs:
       email: brunocodutra@gmail.com
       api_key:
         secure: rQlrCIpRNKD0uqSOVObsk5DZ/leyMjN64q2fApiN6+fg5dJWbbBdpQumLPCJmoEbqK189RuADGleeQbag/I7WU3TzYFet0baLJfR08cWYmXA8CvDsFc7Tld6GzwAhpQnKJ+cJ7uaVTKabL5kRzPnfSk1jSxahNfji51UVYosVxeGHng39lVJvUbbV0v0UGS9SFL6NH89bytc0niIkFOqLLtdAFwhR0zTVcxbVVtElPpRuuOYKhpsnRvrSyg/Qx5diLqnQ/jWhdzyicJxlqeKLsJKVeQOnBRtLz9VWw41E24+/riRyQaDJ96LEvg8t1ii+4logbGoAGEfH3oCFV5hzW0mkcbY19xT5t7bhE+tsVfTFqiWNBxD3v2kLWI5+S1vQWAQ3cmhqi3f7Dk51KHE1X+FAVcttdZApXHBCX9PRHfIULYTGntVBtReSih1L+obEK2+mZYReK8mhTaHUwjx4d/rPabAlyqDOGKFUpG9q4O5NrxjGx4GOLt3ZOCfI+S6Y5qjvYDBbc6x8LYXfKb+Q3DkCctUStFTY4h8yx3g6rnFhthui0LKgDGJTyoVjlQou72wB2ab2I0P70qPdvS6jKySXhRi0VAOcYfqvMpdsWfursi31PvDZ4LCLPh/eT63S8SIy8sJWpRB0otOAvfOBRTfuWt1IYKA4lm3dE5wtD8=
+      skip_cleanup: true
       on:
         tags: true
         repo: brunocodutra/phasor.js
