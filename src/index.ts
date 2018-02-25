@@ -35,6 +35,20 @@ export const rect = (re: number, im = 0): Complex => complex(
 
 export const i = (im = 1) => rect(0, im);
 
+const close = (x: number, y: number, e: number) => (
+  (x === y) || (Math.abs(x - y) < e) || (Math.abs(x - y) / Math.hypot(x, y)) < e
+);
+
+const cosatan = (x: number) => 1 / Math.hypot(1, x);
+
+export const equal = (p: Complex, q: Complex, e = 0) => (
+  close(Math.abs(p.mag), Math.abs(q.mag), e) &&
+  close(cosatan(p.tan) * cosatan(q.tan) + cosatan(1 / p.tan) * cosatan(1 / q.tan), 1, e)
+) || (
+  close(p.mag * cosatan(p.tan), q.mag * cosatan(q.tan), e) &&
+  close(p.mag * cosatan(1 / p.tan), q.mag * cosatan(1 / q.tan), e)
+)
+
 export const norm = (p: Complex): number => Math.abs(p.mag);
 export const angle = (p: Complex): number => Math.atan(p.tan) + (
   (p.mag < 0) ? (p.tan > 0) ? -Math.PI : Math.PI : 0
