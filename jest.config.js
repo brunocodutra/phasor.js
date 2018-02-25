@@ -8,7 +8,7 @@ module.exports = {
   testMatch: ['**/spec/**/*.spec.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['**/src/**/*.ts'],
-  coverageReporters: ['text'],
+  coverageReporters: ['lcov', 'text'],
   globals: {
     'ts-jest': {
       tsConfigFile: './spec/tsconfig.json',
