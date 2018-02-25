@@ -43,6 +43,6 @@
     "ts-loader": "4.0.0-beta.0",
     "typescript": "2.7.2",
     "webpack": "4.0.0-beta.2",
-    "webpack-cli": "2.0.6"
+    "webpack-cli": "2.0.7"
   }
 }
