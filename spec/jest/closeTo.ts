@@ -3,7 +3,7 @@ import {matcherHint, printExpected, printReceived} from 'jest-matcher-utils';
 import {isComplex, Complex, equal} from 'index';
 
 export default {
-  toBeCloseTo(x: number | Complex, y: number | Complex, e = 1E-9) {
+  toBeCloseTo(x: number | Complex, y: number | Complex, e = 1E-6) {
     const pass = (
         (typeof x === 'number' && typeof y === 'number')
       ? (x === y) || (Math.abs(x - y) < e) || (Math.abs(x - y) / Math.hypot(x, y)) < e
