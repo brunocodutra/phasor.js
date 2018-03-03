@@ -91,7 +91,7 @@ export const equal = (p: Complex, q: Complex, e = 0) => {
     ? close(a, c, e)
     : (close(1 / b, 0, e) && close(1 / d, 0, e))
     ? close(a * Math.sign(b), c * Math.sign(d), e)
-    : (Math.abs(a) == Infinity && Math.abs(c) == Infinity)
+    : (Math.abs(a) === Infinity && Math.abs(c) === Infinity)
     ? close(sinatan(b) * sinatan(d) + cosatan(b) * cosatan(d), Math.sign(a * c), e ** 2)
     : close(a ** 2 + c ** 2, 2 * a * c * cosatan(tansubatan(b, d)), e ** 2)
   );
