@@ -13,6 +13,16 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
+        loader: 'tslint-loader',
+        exclude: /node_modules/,
+        enforce: 'pre',
+        options: {
+          typeCheck: true,
+        },
+      },
+
+      {
+        test: /\.ts$/,
         use: ['babel-loader', 'ts-loader'],
         exclude: /node_modules/,
       },
