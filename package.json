@@ -34,7 +34,7 @@
   "side-effects": false,
   "devDependencies": {
     "@babel/core": "7.0.0-beta.41",
-    "@babel/polyfill": "7.0.0-beta.41",
+    "@babel/polyfill": "7.0.0-beta.42",
     "@babel/preset-env": "7.0.0-beta.41",
     "@types/jest": "22.2.0",
     "@types/jest-matcher-utils": "21.0.1",
