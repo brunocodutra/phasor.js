@@ -38,7 +38,7 @@
     "@babel/preset-env": "7.0.0-beta.46",
     "@types/jest": "22.2.3",
     "@types/jest-matcher-utils": "21.0.1",
-    "babel-loader": "8.0.0-beta.0",
+    "babel-loader": "8.0.0-beta.3",
     "jest": "22.4.3",
     "ts-jest": "22.4.6",
     "ts-loader": "4.2.0",
