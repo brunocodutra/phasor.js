@@ -15,4 +15,5 @@
     "noFallthroughCasesInSwitch": true,
   },
   "include": ["src"],
+  "files": ["src/index.ts"],
 }
