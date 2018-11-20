@@ -1,4 +1,7 @@
 {
   "extends": "../tsconfig.json",
-  "include": [".", "../jest"]
+  "compilerOptions": {
+    "esModuleInterop": true,
+  },
+  "include": [".", "../jest"],
 }
