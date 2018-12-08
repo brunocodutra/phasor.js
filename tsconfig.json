@@ -4,9 +4,9 @@
     "paths": {
       "*": ["src/*"],
     },
-    "target": "ES2017",
+    "target": "ESNext",
     "declaration": true,
-    "declarationDir": ".",
+    "declarationDir": "dist/",
     "moduleResolution": "node",
     "strict": true,
     "noImplicitReturns": true,
