@@ -4,7 +4,8 @@
       "loose": true,
       "modules": false,
       "forceAllTransforms": true,
-      "useBuiltIns": "usage"
+      "useBuiltIns": "usage",
+      "corejs": "3",
     }]
   ]
 }

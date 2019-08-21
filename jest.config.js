@@ -1,7 +1,7 @@
 module.exports = {
   moduleFileExtensions: ['js', 'ts'],
   moduleDirectories: ['node_modules', 'src'],
-  setupTestFrameworkScriptFile: './jest/setup.js',
+  setupFilesAfterEnv: ['./jest/setup.js'],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
