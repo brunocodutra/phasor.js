@@ -6,24 +6,10 @@ Phasor.js is a tiny implementation of complex numbers that strives to yield corr
 
 ## Example
 
-#### Node
-
 ```.js
 import {i, rect, add, exp} from 'phasor.js';
 
 add(exp(i(Math.PI)), rect(1)); // approximately rect(0);
-```
-
-#### Browser
-
-```.html
-<script src="http://unpkg.com/phasor.js"></script>
-
-...
-
-<script>
-  add(exp(i(Math.PI)), rect(1)); // approximately rect(0);
-</script>
 ```
 
 ## Motivation
