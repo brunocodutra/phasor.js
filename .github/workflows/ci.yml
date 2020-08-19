@@ -11,16 +11,6 @@ on:
   - cron:  '0 6 * * SAT'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-node@v1
-      with:
-        node-version: 14.x
-    - run: npm install
-    - run: npm run build
-
   test:
     runs-on: ubuntu-latest
     steps:
