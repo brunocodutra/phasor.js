@@ -11,10 +11,114 @@ on:
   - cron:  '0 6 * * SAT'
 
 jobs:
-  test:
+  fmt:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+        components: rustfmt
+    - run: cargo +nightly fmt --all -- --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+        components: clippy
+    - run: cargo +nightly clippy --workspace -- -D warnings
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - run: cargo +nightly install cargo-audit
+    - run: cargo +nightly audit
+
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - run: cargo +nightly doc --all-features
+
+  test:
+    needs: [fmt, clippy, audit, doc]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - run: cargo +nightly test
+
+  sanitize:
+    needs: [test]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [address, leak]
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - run: RUSTFLAGS="-Z sanitizer=${{ matrix.sanitizer }}" cargo +nightly test --tests --lib --all-features --target x86_64-unknown-linux-gnu
+  
+  browser:
+    needs: [test]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+          # ubuntu-latest, 
+          windows-latest, 
+          macOS-latest
+        ]
+
+        include:
+        # https://github.com/rustwasm/wasm-bindgen/issues/2261
+        # - os: 'ubuntu-latest'
+        #   browser: 'firefox'
+
+        - os: 'macOS-latest'
+          browser: 'safari'
+
+        - os: 'windows-latest'
+          browser: 'chrome'
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - uses: jetli/wasm-pack-action@v0.3.0
+    - run: wasm-pack test --headless --${{ matrix.browser }}
+    
+  node:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - uses: jetli/wasm-pack-action@v0.3.0
+    - run: wasm-pack build --target nodejs
     - uses: actions/setup-node@v1
       with:
         node-version: 14.x

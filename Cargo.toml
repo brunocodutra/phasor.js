@@ -1,0 +1,25 @@
+[package]
+name = "phasor"
+version = "2.0.0"
+edition = "2018"
+authors = ["Bruno Dutra <brunocodutra@gmail.com>"]
+description= "Complex numbers done right"
+repository = "https://github.com/brunocodutra/phasor.js.git"
+license = "MIT"
+readme = "README.md"
+keywords = ["complex", "polar", "phasor", "numeric"]
+categories = ["mathematics"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2.67"
+wee_alloc = "0.4.5"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.17"
+
+[profile.release]
+opt-level = "s"
+lto = true
