@@ -1,4 +1,4 @@
-use crate::Phasor;
+use crate::{trig::*, Phasor};
 use std::f64::consts::PI;
 use wasm_bindgen::prelude::*;
 
@@ -50,22 +50,6 @@ impl Phasor for Polar {
     }
 }
 
-fn cosatan(x: f64) -> f64 {
-    if x.recip().is_finite() && !x.recip().is_normal() {
-        x.recip()
-    } else {
-        x.hypot(1f64).recip()
-    }
-}
-
-fn sinatan(x: f64) -> f64 {
-    if x.is_finite() && !x.is_normal() {
-        x
-    } else {
-        cosatan(x.recip()).copysign(x)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -102,16 +86,6 @@ mod tests {
             ang %= 2f64 * PI;
             assert_close_to!(polar.angle().cos(), ang.cos() * mag.signum());
             assert_close_to!(polar.angle().sin(), ang.sin() * mag.signum());
-        }
-
-        #[test]
-        fn cosatan_equals_cosine_of_arc_tangent(x: f64) {
-            assert_close_to!(cosatan(x), x.atan().cos());
-        }
-
-        #[test]
-        fn sinatan_equals_sine_of_arc_tangent(x: f64) {
-            assert_close_to!(sinatan(x), x.atan().sin());
         }
     }
 }
