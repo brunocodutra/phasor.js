@@ -4,6 +4,7 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 mod phasor;
 mod polar;
 mod rect;
+mod trig;
 
 #[cfg(test)]
 mod cmp;
