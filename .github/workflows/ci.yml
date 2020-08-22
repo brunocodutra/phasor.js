@@ -63,6 +63,8 @@ jobs:
       with:
         rust-version: nightly
     - run: cargo +nightly test
+      env: 
+        PROPTEST_CASES: 4096
 
   sanitize:
     needs: [test]
