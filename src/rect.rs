@@ -1,6 +1,8 @@
 use crate::Phasor;
 use wasm_bindgen::prelude::*;
 
+mod display;
+
 #[cfg(test)]
 use proptest_derive::Arbitrary;
 

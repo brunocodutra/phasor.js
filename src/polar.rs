@@ -2,6 +2,8 @@ use crate::{trig::*, Phasor};
 use std::f64::consts::PI;
 use wasm_bindgen::prelude::*;
 
+mod display;
+
 #[cfg(test)]
 use proptest_derive::Arbitrary;
 
