@@ -1,14 +1,14 @@
 pub(crate) fn cosatan(x: f64) -> f64 {
-    if x.recip().is_finite() && !x.recip().is_normal() {
-        x.recip()
-    } else {
+    if x.abs() <= 1f64 {
         x.hypot(1f64).recip()
+    } else {
+        sinatan(x.recip()).abs()
     }
 }
 
 pub(crate) fn sinatan(x: f64) -> f64 {
-    if x.is_finite() && !x.is_normal() {
-        x
+    if x.abs() <= 1f64 {
+        x / x.hypot(1f64)
     } else {
         cosatan(x.recip()).copysign(x)
     }
