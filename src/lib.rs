@@ -7,7 +7,7 @@ mod rect;
 mod trig;
 
 #[cfg(test)]
-mod cmp;
+mod assert;
 
 pub use crate::phasor::Phasor;
 pub use crate::polar::Polar;
