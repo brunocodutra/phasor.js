@@ -4,6 +4,9 @@ use wasm_bindgen::prelude::*;
 mod display;
 
 #[cfg(test)]
+mod approx;
+
+#[cfg(test)]
 use proptest_derive::Arbitrary;
 
 #[wasm_bindgen]
