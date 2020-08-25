@@ -2,13 +2,9 @@
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 mod phasor;
-mod polar;
-mod rect;
 mod trig;
 
 #[cfg(test)]
 mod assert;
 
 pub use crate::phasor::Phasor;
-pub use crate::polar::Polar;
-pub use crate::rect::Rect;

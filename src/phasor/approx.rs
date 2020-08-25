@@ -1,11 +1,14 @@
 use super::*;
 use ::approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
-fn distance(x: &Rect, y: &Rect) -> f64 {
-    (x.real - y.real).hypot(x.imag - y.imag)
+fn distance(p: &Phasor, q: &Phasor) -> (f64, f64) {
+    (
+        p.mag.hypot(q.mag),
+        2f64 * cosatan(tansubatan(p.tan, q.tan)) / p.mag.recip().hypot(q.mag.recip()),
+    )
 }
 
-impl AbsDiffEq for Rect {
+impl AbsDiffEq for Phasor {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
@@ -13,27 +16,30 @@ impl AbsDiffEq for Rect {
     }
 
     fn abs_diff_eq(&self, other: &Self, e: Self::Epsilon) -> bool {
-        distance(self, other).abs_diff_eq(&0f64, e)
+        let (x, y) = distance(self, other);
+        x.abs_diff_eq(&y, e)
     }
 }
 
-impl RelativeEq for Rect {
+impl RelativeEq for Phasor {
     fn default_max_relative() -> Self::Epsilon {
         Self::Epsilon::default_max_relative()
     }
 
     fn relative_eq(&self, other: &Self, e: Self::Epsilon, max: Self::Epsilon) -> bool {
-        distance(self, other).relative_eq(&0f64, e, max)
+        let (x, y) = distance(self, other);
+        x.relative_eq(&y, e, max)
     }
 }
 
-impl UlpsEq for Rect {
+impl UlpsEq for Phasor {
     fn default_max_ulps() -> u32 {
         Self::Epsilon::default_max_ulps()
     }
 
     fn ulps_eq(&self, other: &Self, e: Self::Epsilon, max: u32) -> bool {
-        distance(self, other).ulps_eq(&0f64, e, max)
+        let (x, y) = distance(self, other);
+        x.ulps_eq(&y, e, max)
     }
 }
 
@@ -45,13 +51,13 @@ mod tests {
 
     proptest! {
         #[test]
-        fn close_to(rect: Rect) {
-            let other = Rect {
-                real: rect.real + f64::EPSILON,
-                imag: rect.imag + f64::EPSILON,
+        fn close_to(p: Phasor) {
+            let q = Phasor {
+                mag: p.mag + f64::EPSILON,
+                tan: p.tan + f64::EPSILON,
             };
 
-            assert_close_to!(rect, other);
+            assert_close_to!(p, q);
         }
     }
 }
