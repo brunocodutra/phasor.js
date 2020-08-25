@@ -48,31 +48,35 @@ mod tests {
     use super::*;
     use crate::assert_close_to;
     use proptest::prelude::*;
-    use std::f64::consts::PI;
+    use rug::Float;
 
     proptest! {
         #[test]
         fn cosatan_equals_cosine_of_arc_tangent(x: f64) {
-            assert_close_to!(cosatan(x), x.atan().cos());
+            assert_close_to!(cosatan(x), Float::with_val(80, x).atan().cos().to_f64());
         }
 
         #[test]
         fn sinatan_equals_sine_of_arc_tangent(x: f64) {
-            assert_close_to!(sinatan(x), x.atan().sin());
+            assert_close_to!(sinatan(x), Float::with_val(80, x).atan().sin().to_f64());
         }
 
         #[test]
-        fn tanaddatan_equals_tangent_of_the_sum_of_two_arc_tangent(mut x: f64, mut y: f64) {
-            x %= 2f64 * PI;
-            y %= 2f64 * PI;
-            assert_close_to!(tanaddatan(x.tan(), y.tan()), (x + y).tan(), tol = 1E-9);
+        fn tanaddatan_equals_tangent_of_the_sum_of_two_arc_tangent(x: f64, y: f64) {
+            assert_close_to!(
+                tanaddatan(x, y),
+                (Float::with_val(2048, x).atan() + Float::with_val(2048, y).atan()).tan().to_f64(),
+                tol = 1E-12
+            );
         }
 
         #[test]
-        fn tansubatan_equals_tangent_of_the_difference_of_two_arc_tangent(mut x: f64, mut y: f64) {
-            x %= 2f64 * PI;
-            y %= 2f64 * PI;
-            assert_close_to!(tansubatan(x.tan(), y.tan()), (x - y).tan(), tol = 1E-9);
+        fn tansubatan_equals_tangent_of_the_difference_of_two_arc_tangent(x: f64, y: f64) {
+            assert_close_to!(
+                tansubatan(x, y),
+                (Float::with_val(2048, x).atan() - Float::with_val(2048, y).atan()).tan().to_f64(),
+                tol = 1E-12
+            );
         }
     }
 }
