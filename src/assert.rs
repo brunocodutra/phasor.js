@@ -5,17 +5,20 @@ macro_rules! assert_close_to {
     };
 
     ($lhs:expr, $rhs:expr, tol = $tol:expr) => {
+        let lhs = $lhs;
+        let rhs = $rhs;
+
         assert!(
-            ::approx::RelativeEq::relative_eq(&$lhs, &$rhs, $tol, $tol)
-                || ::approx::UlpsEq::ulps_eq(&$lhs, &$rhs, $tol, ($tol / f64::EPSILON) as u32),
+            ::approx::RelativeEq::relative_eq(&lhs, &rhs, $tol, $tol)
+                || ::approx::UlpsEq::ulps_eq(&lhs, &rhs, $tol, ($tol / f64::EPSILON) as u32),
             r#"expected `lhs` to be approximately equal to `rhs`:
     lhs: `{:e} = {}`,
     rhs: `{:e} = {}`
     tol: `{:e}`
 "#,
-            $lhs,
+            lhs,
             stringify!($lhs),
-            $rhs,
+            rhs,
             stringify!($rhs),
             $tol
         )
