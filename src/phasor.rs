@@ -19,13 +19,9 @@ pub struct Phasor {
 #[wasm_bindgen]
 impl Phasor {
     #[wasm_bindgen]
-    pub fn polar(mag: f64, mut angle: f64) -> Self {
-        angle %= 2f64 * PI;
-
-        let n = (2f64 * angle / PI).abs();
-
+    pub fn polar(mag: f64, angle: f64) -> Self {
         Phasor {
-            mag: if n <= 1f64 || n > 3f64 { mag } else { -mag },
+            mag: mag * angle.cos().signum(),
             tan: angle.tan(),
         }
     }
@@ -97,10 +93,9 @@ mod tests {
         }
 
         #[test]
-        fn angle(mag: f64, mut ang: f64) {
+        fn angle(mag: f64, ang: f64) {
             let p = Phasor::polar(mag, ang);
 
-            ang %= 2f64 * PI;
             assert_close_to!(p.angle().cos(), ang.cos() * mag.signum());
             assert_close_to!(p.angle().sin(), ang.sin() * mag.signum());
         }
