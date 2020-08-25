@@ -68,10 +68,21 @@ impl Phasor {
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
+impl From<rug::Complex> for Phasor {
+    fn from(r: rug::Complex) -> Self {
+        let norm = rug::Float::with_val(r.prec().0, r.norm_ref()).sqrt();
+        let angle = rug::Float::with_val(r.prec().1, r.arg_ref());
+
+        Phasor::polar(norm.to_f64(), angle.to_f64())
+    }
+}
+
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
     use crate::assert_close_to;
     use proptest::prelude::*;
+    use rug::Complex;
 
     proptest! {
         #[test]
@@ -98,6 +109,14 @@ mod tests {
 
             assert_close_to!(p.angle().cos(), ang.cos() * mag.signum());
             assert_close_to!(p.angle().sin(), ang.sin() * mag.signum());
+        }
+
+        #[test]
+        fn from_rug(re: f64, im: f64) {
+            assert_close_to!(
+                Phasor::from(Complex::with_val(80, (re, im))),
+                Phasor::rect(re as f64, im as f64)
+            );
         }
     }
 }
