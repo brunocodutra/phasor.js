@@ -1,5 +1,7 @@
 pub(crate) fn cosatan(x: f64) -> f64 {
-    if x.abs() <= 1f64 {
+    if x.is_nan() {
+        x
+    } else if x.abs() <= 1f64 {
         x.hypot(1f64).recip()
     } else {
         sinatan(x.recip()).abs()
@@ -7,7 +9,9 @@ pub(crate) fn cosatan(x: f64) -> f64 {
 }
 
 pub(crate) fn sinatan(x: f64) -> f64 {
-    if x.abs() <= 1f64 {
+    if x.is_nan() {
+        x
+    } else if x.abs() <= 1f64 {
         x / x.hypot(1f64)
     } else {
         cosatan(x.recip()).copysign(x)
