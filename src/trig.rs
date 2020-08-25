@@ -18,7 +18,7 @@ pub(crate) fn sinatan(x: f64) -> f64 {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_arch = "wasm32")))]
 pub(crate) fn tanaddatan(x: f64, y: f64) -> f64 {
     if x.abs() <= 1f64 && y.abs() <= 1f64 {
         (x + y) / x.mul_add(-y, 1f64)
@@ -43,7 +43,7 @@ pub(crate) fn tansubatan(x: f64, y: f64) -> f64 {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
     use crate::assert_close_to;

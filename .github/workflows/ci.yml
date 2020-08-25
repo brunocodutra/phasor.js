@@ -62,7 +62,20 @@ jobs:
     - uses: hecrj/setup-rust-action@master
       with:
         rust-version: nightly
+    - uses: msys2/setup-msys2@v2
+      with:
+        release: false
+        path-type: inherit
+      if: runner.os == 'Windows'
+
     - run: cargo +nightly test
+      if: runner.os != 'Windows'
+      env: 
+        PROPTEST_CASES: 4096
+      
+    - run: cargo +nightly test
+      shell: msys2 {0}
+      if: runner.os == 'Windows'
       env: 
         PROPTEST_CASES: 4096
 
