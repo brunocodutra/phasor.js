@@ -3,8 +3,8 @@ use ::approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 fn distance(p: &Phasor, q: &Phasor) -> (f64, f64) {
     (
-        p.mag.hypot(q.mag),
-        2f64 * cosatan(tansubatan(p.tan, q.tan)) / p.mag.recip().hypot(q.mag.recip()),
+        (p.mag / 2f64).hypot(q.mag / 2f64),
+        cosatan(tansubatan(p.tan, q.tan)) / p.mag.recip().hypot(q.mag.recip()),
     )
 }
 
