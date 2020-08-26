@@ -5,12 +5,12 @@ use wasm_bindgen::prelude::*;
 mod approx;
 mod display;
 
-#[cfg(test)]
+#[cfg(all(test, not(target_arch = "wasm32")))]
 use proptest_derive::Arbitrary;
 
 #[wasm_bindgen]
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
-#[cfg_attr(test, derive(Arbitrary))]
+#[cfg_attr(all(test, not(target_arch = "wasm32")), derive(Arbitrary))]
 pub struct Phasor {
     mag: f64,
     tan: f64,
@@ -71,7 +71,7 @@ impl Phasor {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
     use crate::assert_close_to;
