@@ -2,6 +2,7 @@ use crate::trig::*;
 use std::f64::consts::PI;
 use wasm_bindgen::prelude::*;
 
+mod add;
 mod approx;
 mod display;
 
