@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 mod add;
 mod approx;
 mod display;
+mod sub;
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
 use proptest_derive::Arbitrary;
