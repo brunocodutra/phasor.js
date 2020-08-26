@@ -19,9 +19,11 @@ wasm-bindgen = "0.2.67"
 wee_alloc = "0.4.5"
 
 [dev-dependencies]
-proptest = { version = "0.10.1", features = ["std"], default-features = false }
-proptest-derive = "0.2.0"
 wasm-bindgen-test = "0.3.17"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+proptest = "0.10.1"
+proptest-derive = "0.2.0"
 
 [profile.release]
 opt-level = "s"
