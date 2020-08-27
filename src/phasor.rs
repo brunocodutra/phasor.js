@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 mod add;
 mod approx;
 mod display;
+mod div;
 mod mul;
 mod sub;
 
