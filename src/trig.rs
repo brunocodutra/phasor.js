@@ -18,7 +18,6 @@ pub(crate) fn sinatan(x: f64) -> f64 {
     }
 }
 
-#[cfg(all(test, not(target_arch = "wasm32")))]
 pub(crate) fn tanaddatan(x: f64, y: f64) -> f64 {
     if x.abs() <= 1f64 && y.abs() <= 1f64 {
         (x + y) / x.mul_add(-y, 1f64)
