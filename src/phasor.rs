@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 mod add;
 mod approx;
 mod display;
+mod mul;
 mod sub;
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
