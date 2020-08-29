@@ -79,14 +79,16 @@ mod tests {
 
     proptest! {
         #[test]
-        fn real(re: f32, im: f32) {
+        fn real(re: f64, im: f64) {
             let p = Phasor::rect(re as f64, im as f64);
+            prop_assume!(p.real().is_normal());
             assert_close_to!(p.real(), re as f64);
         }
 
         #[test]
-        fn imag(re: f32, im: f32) {
+        fn imag(re: f64, im: f64) {
             let p = Phasor::rect(re as f64, im as f64);
+            prop_assume!(p.real().is_normal());
             assert_close_to!(p.imag(), im as f64);
         }
 
