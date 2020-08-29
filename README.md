@@ -32,9 +32,9 @@ Phasor.js on the other hand successfully passes all of the following
 assertions.
 
 ```.js
-equal(mul(i(Infinity), i(-Infinity)), rect(Infinity));
-equal(div(i(1E200), i(1E200)), rect(1));
-equal(div(i(1E-200), i(1E-200)), rect(1));
+closeTo(mul(i(Infinity), i(-Infinity)), rect(Infinity));
+closeTo(div(i(1E200), i(1E200)), rect(1));
+closeTo(div(i(1E-200), i(1E-200)), rect(1));
 ```
 
 ## API Reference
@@ -53,7 +53,7 @@ Constructs a purely imaginary number.
 
 > Example:
 ```{.js}
-equal(i(42), rect(0, 42));
+closeTo(i(42), rect(0, 42));
 ```
 
 #### real(c)
@@ -92,7 +92,7 @@ Extracts the angle of a complex number.
 angle(i(42)) === Math.PI / 2;
 ```
 
-#### equal(c1, c2, e = 0)
+#### closeTo(c1, c2, e = 0)
 
 Compares two complex numbers for equality, optionally taking a positive
 residue for approximate comparisons.
@@ -103,7 +103,7 @@ Computes the addition of two complex numbers.
 
 > Example:
 ```{.js}
-equal(add(rect(3), rect(0, 4)), rect(3, 4));
+closeTo(add(rect(3), rect(0, 4)), rect(3, 4));
 ```
 
 #### sub(c1, c2)
@@ -112,7 +112,7 @@ Computes the subtraction of two complex numbers.
 
 > Example:
 ```{.js}
-equal(sub(rect(3), rect(0, 4)), rect(3, -4));
+closeTo(sub(rect(3), rect(0, 4)), rect(3, -4));
 ```
 
 #### mul(c1, c2)
@@ -121,7 +121,7 @@ Computes the multiplication of two complex numbers.
 
 > Example:
 ```{.js}
-equal(mul(rect(3), rect(0, 4)), i(12));
+closeTo(mul(rect(3), rect(0, 4)), i(12));
 ```
 
 #### div(c1, c2)
@@ -130,7 +130,7 @@ Computes the division of two complex numbers.
 
 > Example:
 ```{.js}
-equal(div(rect(3), rect(0, 4)), i(-0.75));
+closeTo(div(rect(3), rect(0, 4)), i(-0.75));
 ```
 
 #### neg(c)
@@ -139,7 +139,7 @@ Computes the opposite of a complex number.
 
 > Example:
 ```{.js}
-equal(neg(rect(3, 4)), rect(-3, -4));
+closeTo(neg(rect(3, 4)), rect(-3, -4));
 ```
 
 #### conj(c)
@@ -148,7 +148,7 @@ Computes the conjugate of a complex number.
 
 > Example:
 ```{.js}
-equal(conj(rect(3, 4)), rect(3, -4));
+closeTo(conj(rect(3, 4)), rect(3, -4));
 ```
 
 #### exp(c)
@@ -157,7 +157,7 @@ Computes the exponential of a complex number.
 
 > Example:
 ```{.js}
-equal(exp(rect(3, 4)), polar(Math.exp(3), 4));
+closeTo(exp(rect(3, 4)), polar(Math.exp(3), 4));
 ```
 
 #### log(c)
@@ -166,7 +166,7 @@ Computes the principal logarithm of a complex number.
 
 > Example:
 ```{.js}
-equal(log(rect(3, 4)), rect(Math.log(5), Math.atan(4 / 3)));
+closeTo(log(rect(3, 4)), rect(Math.log(5), Math.atan(4 / 3)));
 ```
 
 #### sinh(c)
@@ -176,7 +176,7 @@ Computes the hyperbolic sine of a complex number.
 > Example:
 ```{.js}
 const c = rect(3, 4);
-equal(sinh(c), div(sub(exp(c), exp(neg(c))), rect(2)));
+closeTo(sinh(c), div(sub(exp(c), exp(neg(c))), rect(2)));
 ```
 
 #### cosh(c)
@@ -186,7 +186,7 @@ Computes the hyperbolic cosine of a complex number.
 > Example:
 ```{.js}
 const c = rect(3, 4);
-equal(cosh(c), div(add(exp(c), exp(neg(c))), rect(2)));
+closeTo(cosh(c), div(add(exp(c), exp(neg(c))), rect(2)));
 ```
 
 ## Under the Hood
