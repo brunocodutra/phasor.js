@@ -1,5 +1,5 @@
 use super::*;
-use std::ops::Div;
+use core::ops::Div;
 
 impl Div for Phasor {
     type Output = Self;
@@ -20,6 +20,7 @@ impl Div for Phasor {
 mod tests {
     use super::*;
     use crate::assert_close_to;
+    use alloc::format;
     use proptest::prelude::*;
 
     proptest! {

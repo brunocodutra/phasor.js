@@ -1,5 +1,5 @@
 use crate::trig::*;
-use std::f64::consts::PI;
+use core::f64::consts::PI;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -77,6 +77,7 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::assert_close_to;
+    use alloc::format;
     use proptest::prelude::*;
 
     proptest! {

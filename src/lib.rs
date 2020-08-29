@@ -1,3 +1,8 @@
+#![no_std]
+
+#[cfg(test)]
+extern crate alloc;
+
 mod assert;
 mod phasor;
 mod trig;

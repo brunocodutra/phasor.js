@@ -1,5 +1,5 @@
 use super::*;
-use std::ops::Sub;
+use core::ops::Sub;
 
 impl Sub for Phasor {
     type Output = Self;
