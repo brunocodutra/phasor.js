@@ -46,16 +46,55 @@ impl UlpsEq for Phasor {
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
-    use crate::assert_close_to;
-    use proptest::prelude::*;
+    use proptest::{num::f64::NORMAL, prelude::*};
 
     proptest! {
         #[test]
-        fn close_to(a: f64, b: f64) {
-            assert_close_to!(
-                Phasor::rect(a * 1.0000000001, b * 0.9999999999),
-                Phasor::rect(a * 0.9999999999, b * 1.0000000001)
-            );
+        fn abs_diff_eq(a: f64, b: f64) {
+            let p = Phasor::rect(a * 1.000001, b * 0.999999);
+            let q = Phasor::rect(a * 0.999999, b * 1.000001);
+
+            assert!(p.abs_diff_eq(&q, 1E-10));
+        }
+
+        #[test]
+        fn abs_diff_neq(a in NORMAL, b in NORMAL) {
+            let p = Phasor::rect(a * 1.000001, b * 0.999999);
+            let q = Phasor::rect(a * 0.999999, b * 1.000001);
+
+            assert!(!p.abs_diff_eq(&q, 1E-12));
+        }
+
+        #[test]
+        fn relative_eq(a: f64, b: f64) {
+            let p = Phasor::rect(a * 1.000001, b * 0.999999);
+            let q = Phasor::rect(a * 0.999999, b * 1.000001);
+
+            assert!(p.relative_eq(&q, 0f64, 1E-10));
+        }
+
+        #[test]
+        fn relative_neq(a in NORMAL, b in NORMAL) {
+            let p = Phasor::rect(a * 1.000001, b * 0.999999);
+            let q = Phasor::rect(a * 0.999999, b * 1.000001);
+
+            assert!(!p.relative_eq(&q, 0f64, 1E-12));
+        }
+
+        #[test]
+        fn ulps_eq(a: f64, b: f64) {
+            let p = Phasor::rect(a * 1.000001, b * 0.999999);
+            let q = Phasor::rect(a * 0.999999, b * 1.000001);
+
+            assert!(p.ulps_eq(&q, 0f64, 100000));
+        }
+
+        #[test]
+        fn ulps_neq(a in NORMAL, b in NORMAL) {
+            let p = Phasor::rect(a * 1.000001, b * 0.999999);
+            let q = Phasor::rect(a * 0.999999, b * 1.000001);
+
+            assert!(!p.ulps_eq(&q, 0f64, 1000));
         }
     }
 }
