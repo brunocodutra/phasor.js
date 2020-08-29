@@ -1,6 +1,6 @@
 import {matcherHint, printExpected, printReceived} from 'jest-matcher-utils';
 
-import {isComplex, Complex, equal} from 'index';
+import {isComplex, Complex, closeTo} from 'index';
 
 export default {
   toBeCloseTo(x: number | Complex, y: number | Complex, e = 1E-6) {
@@ -8,7 +8,7 @@ export default {
         (typeof x === 'number' && typeof y === 'number')
       ? (x === y) || (Math.abs(x - y) < e) || (Math.abs(x - y) / Math.hypot(x, y)) < e
       : (isComplex(x) && isComplex(y))
-      ? equal(x, y, e)
+      ? closeTo(x, y, e)
       : false
     );
 

@@ -82,7 +82,7 @@ const close = (x: number, y: number, e: number) => (
   (Math.abs(x - y) / Math.hypot(x, y)) <= Math.abs(e) / 2 ** 0.5
 );
 
-export const equal = (p: Complex, q: Complex, e = 0) => {
+export const closeTo = (p: Complex, q: Complex, e = 0) => {
   const {mag: a, tan: b} = p;
   const {mag: c, tan: d} = q;
 
