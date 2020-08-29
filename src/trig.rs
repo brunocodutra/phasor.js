@@ -46,8 +46,8 @@ pub(crate) fn tansubatan(x: f64, y: f64) -> f64 {
 mod tests {
     use super::*;
     use crate::assert_close_to;
+    use core::f64::consts::PI;
     use proptest::prelude::*;
-    use std::f64::consts::PI;
 
     proptest! {
         #[test]

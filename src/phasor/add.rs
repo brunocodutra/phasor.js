@@ -1,5 +1,5 @@
 use super::*;
-use std::ops::Add;
+use core::ops::Add;
 
 impl Add for Phasor {
     type Output = Self;

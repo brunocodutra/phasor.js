@@ -1,5 +1,5 @@
 use super::*;
-use std::ops::Mul;
+use core::ops::Mul;
 
 impl Mul for Phasor {
     type Output = Self;
@@ -20,6 +20,7 @@ impl Mul for Phasor {
 mod tests {
     use super::*;
     use crate::assert_close_to;
+    use alloc::format;
     use proptest::prelude::*;
 
     proptest! {
