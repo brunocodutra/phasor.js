@@ -81,6 +81,20 @@ jobs:
         rust-version: nightly
     - run: RUSTFLAGS="-Z sanitizer=${{ matrix.sanitizer }}" cargo +nightly test --tests --lib --all-features --target x86_64-unknown-linux-gnu
   
+  coverage:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - run: cargo +nightly install cargo-tarpaulin
+    - run: cargo +nightly tarpaulin --all-features --out Xml
+    - run: bash <(curl -s https://codecov.io/bash) -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   browser:
     needs: [test]
     runs-on: ${{ matrix.os }}
@@ -127,9 +141,6 @@ jobs:
         node-version: 14.x
     - run: npm install
     - run: npm test
-    - run: bash <(curl -s https://codecov.io/bash) -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   check-package-lock:
     runs-on: ubuntu-latest
