@@ -37,7 +37,7 @@ mod tests {
                 t * ((a / t) * (d / u) + (b / t) * (c / u)) * u,
             );
 
-            prop_assume!(r.mag.is_normal());
+            prop_assume!(r.is_normal());
             assert_close_to!(p * q, r);
         }
     }
