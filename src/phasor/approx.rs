@@ -2,12 +2,15 @@ use super::*;
 use ::approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 fn distance(p: &Phasor, q: &Phasor) -> f64 {
-    if (p.mag.is_infinite() && q.mag.is_infinite())
-        || (p.mag.recip().is_infinite() && q.mag.recip().is_infinite())
-    {
-        cosatan(tansubatan(p.tan, q.tan))
-    } else {
-        2f64 * cosatan(tansubatan(p.tan, q.tan)) * cosatan(p.mag / q.mag) * cosatan(q.mag / p.mag)
+    use core::num::FpCategory::*;
+
+    match (p.classify(), q.classify()) {
+        (Zero, Zero) | (Infinite, Infinite) => cosatan(tansubatan(p.tan, q.tan)),
+        _ => {
+            2f64 * cosatan(tansubatan(p.tan, q.tan))
+                * cosatan(p.mag / q.mag)
+                * cosatan(q.mag / p.mag)
+        }
     }
 }
 

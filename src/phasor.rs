@@ -9,6 +9,7 @@ use proptest_derive::Arbitrary;
 mod add;
 mod angle;
 mod approx;
+mod classify;
 mod display;
 mod div;
 mod imag;
