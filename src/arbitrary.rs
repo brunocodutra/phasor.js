@@ -1,4 +1,4 @@
-use proptest::num::f64::*;
+use proptest::{num::f64::*, prelude::*};
 
 pub(crate) fn any() -> Any {
     ANY
@@ -37,4 +37,8 @@ pub(crate) fn nonzero() -> Any {
 
 pub(crate) fn regular() -> Any {
     normal() | subnormal()
+}
+
+pub(crate) fn modulo(period: f64) -> impl Strategy<Value = f64> {
+    finite().prop_map(move |n| n % period).boxed()
 }
