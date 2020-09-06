@@ -1,4 +1,5 @@
 use crate::trig::*;
+use core::num::FpCategory;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -36,16 +37,15 @@ impl Phasor {
         }
     }
 
-    #[allow(clippy::float_cmp)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn rect(re: f64, im: f64) -> Self {
         Phasor {
             mag: re.hypot(im).copysign(re),
 
-            tan: if im.abs() == re.abs() {
-                // tan(atan2(+-0, +-0) := +-1
-                // tan(atan2(+-inf, +-inf) := +-1
-                im.signum() / re.signum()
+            tan: if im.classify() == FpCategory::Zero {
+                im / re.signum() // := +-{0, PI}
+            } else if re.is_infinite() && im.is_infinite() {
+                im.signum() / re.signum() // := +-1
             } else {
                 im / re
             },
