@@ -1,4 +1,5 @@
-use super::*;
+use super::Phasor;
+use crate::trig::{cosatan2, cossubatan, sinatan2};
 use ::approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 #[allow(clippy::float_cmp)]

@@ -1,4 +1,4 @@
-use super::*;
+use crate::Phasor;
 use core::ops::Add;
 
 impl Add for Phasor {

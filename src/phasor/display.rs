@@ -1,4 +1,4 @@
-use super::*;
+use super::Phasor;
 use core::fmt::{Display, Error, Formatter, LowerExp, UpperExp};
 
 impl Display for Phasor {
