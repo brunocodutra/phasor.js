@@ -1,4 +1,3 @@
-use crate::trig::*;
 use core::num::FpCategory;
 
 #[cfg(target_arch = "wasm32")]

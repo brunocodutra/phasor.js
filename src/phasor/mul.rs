@@ -1,4 +1,5 @@
-use super::*;
+use super::Phasor;
+use crate::trig::tanaddatan;
 use core::ops::Mul;
 
 impl Mul for Phasor {

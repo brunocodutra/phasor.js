@@ -1,4 +1,5 @@
-use super::*;
+use super::Phasor;
+use crate::trig::tansubatan;
 use core::ops::Div;
 
 impl Div for Phasor {

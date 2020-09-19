@@ -1,4 +1,4 @@
-use super::*;
+use super::Phasor;
 use core::ops::Sub;
 
 impl Sub for Phasor {
