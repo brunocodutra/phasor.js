@@ -10,6 +10,7 @@ mod add;
 mod angle;
 mod approx;
 mod classify;
+mod conj;
 mod display;
 mod div;
 mod imag;
