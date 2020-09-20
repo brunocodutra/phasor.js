@@ -18,6 +18,7 @@ mod mul;
 mod neg;
 mod norm;
 mod real;
+mod recip;
 mod sub;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
