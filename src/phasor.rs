@@ -14,6 +14,7 @@ mod display;
 mod div;
 mod imag;
 mod mul;
+mod neg;
 mod norm;
 mod real;
 mod sub;
