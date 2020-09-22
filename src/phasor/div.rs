@@ -20,26 +20,80 @@ impl Div for Phasor {
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
+    use crate::arbitrary::{any, *};
     use crate::assert_close_to;
     use alloc::format;
+    use core::num::FpCategory::{Infinite, Zero};
     use proptest::prelude::*;
 
     proptest! {
         #[test]
-        fn div(a: f64, b: f64, c: f64, d: f64) {
-            let p = Phasor::rect(a, b);
-            let q = Phasor::rect(c, d);
+        fn dividing_phasors_has_norm_equal_to_ratio_of_norms(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+            prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
 
-            let t = p.mag.abs().max(1f64);
-            let u = q.mag.abs();
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
 
-            let r = Phasor::rect(
-                t  * ((a / t) * (c / u) + (b / t) * (d / u)) / u,
-                t  * ((b / t) * (c / u) - (a / t) * (d / u)) / u,
-            );
+            assert_close_to!((p / q).norm(), p.norm() / q.norm());
+            assert_close_to!((q / p).norm(), q.norm() / p.norm());
+        }
 
-            prop_assume!(r.is_normal());
-            assert_close_to!(p / q, r);
+        #[test]
+        fn dividing_phasors_has_angle_equal_to_sum_of_angles(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+            prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
+
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert_close_to!((p / q).angle().cos(), (p.angle() - q.angle()).cos());
+            assert_close_to!((p / q).angle().sin(), (p.angle() - q.angle()).sin());
+
+            assert_close_to!((q / p).angle().cos(), (q.angle() - p.angle()).cos());
+            assert_close_to!((q / p).angle().sin(), (q.angle() - p.angle()).sin());
+        }
+
+        #[test]
+        fn dividing_finite_nonzero_phasor_by_itself_equals_one(a in regular(), b in not_nan()) {
+            let p = Phasor { mag: a, tan: b };
+            let r = Phasor { mag: 1f64, tan: 0f64 };
+
+            assert_close_to!(p / p, r);
+        }
+
+        #[test]
+        fn dividing_infinite_phasors_is_nan(a in infinite(), b in not_nan(), c in infinite(), d in not_nan()) {
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert!((p / q).is_nan());
+            assert!((q / p).is_nan());
+        }
+
+        #[test]
+        fn dividing_zero_phasors_is_nan(a in zero(), b in not_nan(), c in zero(), d in not_nan()) {
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert!((p / q).is_nan());
+            assert!((q / p).is_nan());
+        }
+
+        #[test]
+        fn dividing_by_phasor_that_has_undefined_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert!((p / q).is_nan());
+            assert!((q / p).is_nan());
+        }
+
+        #[test]
+        fn dividing_by_phasor_that_has_undefined_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert!((p / q).is_nan());
+            assert!((q / p).is_nan());
         }
     }
 }
