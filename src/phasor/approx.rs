@@ -1,13 +1,14 @@
 use super::Phasor;
 use crate::trig::{cosatan2, cossubatan, sinatan2};
 use ::approx::{AbsDiffEq, RelativeEq, UlpsEq};
+use core::f64::consts::SQRT_2;
 
 #[allow(clippy::float_cmp)]
 fn similarity(p: &Phasor, q: &Phasor) -> f64 {
     let k = if p.mag.abs() == q.mag.abs() {
         p.mag.signum() * q.mag.signum()
     } else {
-        sinatan2(p.mag, q.mag) * cosatan2(p.mag, q.mag) * 2f64
+        (SQRT_2 * sinatan2(p.mag, q.mag)) * (SQRT_2 * cosatan2(p.mag, q.mag))
     };
 
     k * cossubatan(p.tan, q.tan)

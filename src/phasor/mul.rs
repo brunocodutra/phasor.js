@@ -6,14 +6,12 @@ impl Mul for Phasor {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        let tan = tanaddatan(self.tan, rhs.tan);
-        let mag = if self.tan.signum() != tan.signum() && rhs.tan.signum() != tan.signum() {
-            -self.mag * rhs.mag
-        } else {
-            self.mag * rhs.mag
-        };
+        let (s, c) = tanaddatan(self.tan, rhs.tan);
 
-        Phasor { mag, tan }
+        Phasor {
+            mag: self.mag * rhs.mag * c.signum(),
+            tan: s / c,
+        }
     }
 }
 
