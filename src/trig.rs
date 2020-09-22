@@ -27,32 +27,39 @@ pub(crate) fn cosatan2(s: f64, c: f64) -> f64 {
     }
 }
 
-pub(crate) fn tanaddatan(x: f64, y: f64) -> f64 {
-    match (x.abs() <= 1f64, y.abs() <= 1f64) {
-        (true, true) => (x + y) / x.mul_add(-y, 1f64),
-        (false, true) => y.mul_add(x.recip(), 1f64) / (x.recip() - y),
-        (true, false) => x.mul_add(y.recip(), 1f64) / (y.recip() - x),
-        (false, false) => (x.recip() + y.recip()) / x.recip().mul_add(y.recip(), -1f64),
+pub(crate) fn tanaddatan(x: f64, y: f64) -> (f64, f64) {
+    let xm = x.abs();
+    let ym = y.abs();
+
+    let xs = x.signum();
+    let ys = y.signum();
+
+    match (xm <= 1f64, ym <= 1f64) {
+        (true, true) => (x + y, x.mul_add(-y, 1f64)),
+        (false, true) => (y.mul_add(xm.recip(), xs), y.mul_add(-xs, xm.recip())),
+        (true, false) => (x.mul_add(ym.recip(), ys), x.mul_add(-ys, ym.recip())),
+        (false, false) => (xs / ym + ys / xm, xm.recip().mul_add(ym.recip(), -xs * ys)),
     }
 }
 
-pub(crate) fn tansubatan(x: f64, y: f64) -> f64 {
-    match (x.abs() <= 1f64, y.abs() <= 1f64) {
-        (true, true) => (x - y) / x.mul_add(y, 1f64),
-        (false, true) => y.mul_add(-x.recip(), 1f64) / (x.recip() + y),
-        (true, false) => x.mul_add(y.recip(), -1f64) / (y.recip() + x),
-        (false, false) => (y.recip() - x.recip()) / x.recip().mul_add(y.recip(), 1f64),
+pub(crate) fn tansubatan(x: f64, y: f64) -> (f64, f64) {
+    let xm = x.abs();
+    let ym = y.abs();
+
+    let xs = x.signum();
+    let ys = y.signum();
+
+    match (xm <= 1f64, ym <= 1f64) {
+        (true, true) => (x - y, x.mul_add(y, 1f64)),
+        (false, true) => (y.mul_add(-xm.recip(), xs), y.mul_add(xs, xm.recip())),
+        (true, false) => (x.mul_add(ym.recip(), -ys), x.mul_add(ys, ym.recip())),
+        (false, false) => (xs / ym - ys / xm, xm.recip().mul_add(ym.recip(), xs * ys)),
     }
 }
 
 pub(crate) fn cossubatan(x: f64, y: f64) -> f64 {
-    let tan = tansubatan(x, y);
-
-    if x.signum() != tan.signum() && y.signum() == tan.signum() {
-        -cosatan(tan)
-    } else {
-        cosatan(tan)
-    }
+    let (s, c) = tansubatan(x, y);
+    cosatan2(s, c)
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
@@ -108,24 +115,40 @@ mod tests {
 
         #[test]
         fn tanaddatan_equals_tangent_of_the_sum_of_atan(x in modulo(FRAC_PI_2), y in modulo(FRAC_PI_2)) {
-            assert_close_to!(tanaddatan(x.tan(), y.tan()), (x + y).tan(), tol = 1E-10);
+            let (s, c) = tanaddatan(x.tan(), y.tan());
+            assert_close_to!(s.atan2(c), x + y);
         }
 
         #[test]
         fn tanaddatan_of_nan_is_nan(x in nan(), y in any()) {
-            assert!(tanaddatan(x, y).is_nan());
-            assert!(tanaddatan(y, x).is_nan());
+            let (s, c) = tanaddatan(x.tan(), y.tan());
+
+            assert!(s.is_nan());
+            assert!(c.is_nan());
+
+            let (s, c) = tanaddatan(y.tan(), x.tan());
+
+            assert!(s.is_nan());
+            assert!(c.is_nan());
         }
 
         #[test]
         fn tansubatan_equals_tangent_of_the_difference_of_atan(x in modulo(FRAC_PI_2), y in modulo(FRAC_PI_2)) {
-            assert_close_to!(tansubatan(x.tan(), y.tan()), (x - y).tan(), tol = 1E-10);
+            let (s, c) = tansubatan(x.tan(), y.tan());
+            assert_close_to!(s.atan2(c), x - y);
         }
 
         #[test]
         fn tansubatan_of_nan_is_nan(x in nan(), y in any()) {
-            assert!(tansubatan(x, y).is_nan());
-            assert!(tansubatan(y, x).is_nan());
+            let (s, c) = tansubatan(x.tan(), y.tan());
+
+            assert!(s.is_nan());
+            assert!(c.is_nan());
+
+            let (s, c) = tansubatan(y.tan(), x.tan());
+
+            assert!(s.is_nan());
+            assert!(c.is_nan());
         }
 
         #[test]
