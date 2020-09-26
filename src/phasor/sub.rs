@@ -99,6 +99,15 @@ mod tests {
         }
 
         #[test]
+        fn subtracting_finite_phasor_to_its_conjugate_is_purely_imaginary(a in finite(), b in not_nan()) {
+            let p = Phasor { mag: a, tan: b };
+            let q = p.conj();
+
+            assert!((p - q).is_imaginary());
+            assert!((q - p).is_imaginary());
+        }
+
+        #[test]
         fn subtracting_equal_infinite_phasors_is_nan(a in infinite(), b in not_nan()) {
             let p = Phasor { mag: a, tan: b };
 

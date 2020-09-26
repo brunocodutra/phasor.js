@@ -133,6 +133,15 @@ mod tests {
         }
 
         #[test]
+        fn adding_finite_phasor_to_its_conjugate_is_purely_real(a in finite(), b in not_nan()) {
+            let p = Phasor { mag: a, tan: b };
+            let q = p.conj();
+
+            assert!((p + q).is_real());
+            assert!((q + p).is_real());
+        }
+
+        #[test]
         fn adding_opposite_infinite_phasors_is_nan(a in infinite(), b in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = -p;

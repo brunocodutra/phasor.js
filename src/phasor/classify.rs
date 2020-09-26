@@ -45,6 +45,16 @@ impl Phasor {
     pub fn is_normal(&self) -> bool {
         self.classify() == FpCategory::Normal
     }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+    pub fn is_real(&self) -> bool {
+        self.tan.classify() == FpCategory::Zero && self.mag.classify() != FpCategory::Nan
+    }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+    pub fn is_imaginary(&self) -> bool {
+        self.tan.classify() == FpCategory::Infinite && self.mag.classify() != FpCategory::Nan
+    }
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
@@ -106,6 +116,42 @@ mod tests {
         fn phasor_is_normal_if_mag_is_normal_and_tan_is_not_nan(mag in normal(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert!(p.is_normal());
+        }
+
+        #[test]
+        fn phasor_is_real_if_mag_is_not_nan_and_tan_is_zero(mag in not_nan(), tan in zero()) {
+            let p = Phasor { mag, tan };
+            assert!(p.is_real());
+        }
+
+        #[test]
+        fn phasor_is_not_real_if_mag_is_nan(mag in nan(), tan in any()) {
+            let p = Phasor { mag, tan };
+            assert!(!p.is_real());
+        }
+
+        #[test]
+        fn phasor_is_not_real_if_tan_is_nonzero(mag in any(), tan in nonzero()) {
+            let p = Phasor { mag, tan };
+            assert!(!p.is_real());
+        }
+
+        #[test]
+        fn phasor_is_imaginary_if_mag_is_not_nan_and_tan_is_infinite(mag in not_nan(), tan in infinite()) {
+            let p = Phasor { mag, tan };
+            assert!(p.is_imaginary());
+        }
+
+        #[test]
+        fn phasor_is_not_imaginary_if_mag_is_nan(mag in nan(), tan in any()) {
+            let p = Phasor { mag, tan };
+            assert!(!p.is_imaginary());
+        }
+
+        #[test]
+        fn phasor_is_not_imaginary_if_tan_is_finite(mag in any(), tan in finite()) {
+            let p = Phasor { mag, tan };
+            assert!(!p.is_imaginary());
         }
     }
 }
