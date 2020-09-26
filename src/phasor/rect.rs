@@ -13,8 +13,6 @@ impl Phasor {
 
             tan: if im.classify() == FpCategory::Zero {
                 im / re.signum() // := +-{0, PI}
-            } else if re.is_infinite() && im.is_infinite() {
-                im.signum() / re.signum() // := +-1
             } else {
                 im / re
             },
