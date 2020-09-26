@@ -17,11 +17,11 @@ crate-type = ["cdylib", "rlib"]
 approx = "0.3.2"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "0.2.67"
+wasm-bindgen = "0.2.68"
 wee_alloc = "0.4.5"
 
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
-wasm-bindgen-test = "0.3.17"
+wasm-bindgen-test = "0.3.18"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 proptest = "0.10.1"
