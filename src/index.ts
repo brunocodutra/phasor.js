@@ -145,7 +145,7 @@ export const div = (p: Complex, q: Complex): Complex => {
 };
 
 export const exp = (p: Complex): Complex => polar(Math.exp(real(p)), imag(p));
-export const log = (p: Complex): Complex => rect(Math.log(norm(p)), angle(p));
+export const ln = (p: Complex): Complex => rect(Math.log(norm(p)), angle(p));
 
 export const sinh = (p: Complex): Complex => div(sub(exp(p), exp(neg(p))), rect(2));
 export const cosh = (p: Complex): Complex => div(add(exp(p), exp(neg(p))), rect(2));
