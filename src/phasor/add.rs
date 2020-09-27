@@ -29,9 +29,9 @@ impl Add for Phasor {
 
         Phasor {
             mag: if m.abs() > n.abs() {
-                k / i.abs() * m.copysign(w + y)
+                m.copysign(w + y) * k / i.abs()
             } else {
-                k / j.abs() * n.copysign(w + y)
+                n.copysign(w + y) * k / j.abs()
             },
 
             tan: if m.abs() == n.abs() && ((x > w) ^ (z > y)) {
