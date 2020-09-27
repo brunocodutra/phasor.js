@@ -15,7 +15,13 @@ pub(crate) fn sinatan2(s: f64, c: f64) -> f64 {
     match (s.classify(), c.classify()) {
         (Zero, Zero) => s,
         (Infinite, Infinite) => FRAC_1_SQRT_2.copysign(s),
-        _ => 1f64.hypot(c / s).recip().copysign(s),
+        _ => {
+            if s.abs() > c.abs() {
+                1f64.hypot(c / s).recip().copysign(s)
+            } else {
+                (s / c).copysign(s) / 1f64.hypot(s / c)
+            }
+        }
     }
 }
 
@@ -23,7 +29,13 @@ pub(crate) fn cosatan2(s: f64, c: f64) -> f64 {
     match (s.classify(), c.classify()) {
         (Zero, Zero) => c.signum(),
         (Infinite, Infinite) => FRAC_1_SQRT_2.copysign(c),
-        _ => 1f64.hypot(s / c).recip().copysign(c),
+        _ => {
+            if s.abs() > c.abs() {
+                (c / s).copysign(c) / 1f64.hypot(c / s)
+            } else {
+                1f64.hypot(s / c).recip().copysign(c)
+            }
+        }
     }
 }
 

@@ -11,6 +11,7 @@ mod classify;
 mod conj;
 mod display;
 mod div;
+mod exp;
 mod imag;
 mod mul;
 mod neg;
