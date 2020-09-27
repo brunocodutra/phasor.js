@@ -13,6 +13,7 @@ mod display;
 mod div;
 mod exp;
 mod imag;
+mod ln;
 mod mul;
 mod neg;
 mod norm;
