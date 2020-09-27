@@ -160,13 +160,13 @@ Computes the exponential of a complex number.
 closeTo(exp(rect(3, 4)), polar(Math.exp(3), 4));
 ```
 
-#### log(c)
+#### ln(c)
 
-Computes the principal logarithm of a complex number.
+Computes the principal natural logarithm of a complex number.
 
 > Example:
 ```{.js}
-closeTo(log(rect(3, 4)), rect(Math.log(5), Math.atan(4 / 3)));
+closeTo(ln(rect(3, 4)), rect(Math.log(5), Math.atan(4 / 3)));
 ```
 
 #### sinh(c)

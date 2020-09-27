@@ -1,4 +1,4 @@
-import {log, polar, rect} from 'index';
+import {ln, polar, rect} from 'index';
 
 import {samples} from './util';
 
@@ -10,12 +10,12 @@ describe('Complex', () => {
       if (isFinite(mag)) {
         const r = rect(Math.log(mag), normalize(ang));
         const u = polar(mag, ang);
-        expect(log(u)).toBeCloseTo(r);
+        expect(ln(u)).toBeCloseTo(r);
       }
     });
 
-    expect(log(polar(NaN))).toBeNaN();
-    expect(log(polar(0, NaN))).toBeNaN();
-    expect(log(polar(NaN, NaN))).toBeNaN();
+    expect(ln(polar(NaN))).toBeNaN();
+    expect(ln(polar(0, NaN))).toBeNaN();
+    expect(ln(polar(NaN, NaN))).toBeNaN();
   });
 });
