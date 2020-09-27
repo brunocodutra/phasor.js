@@ -28,33 +28,23 @@ pub(crate) fn cosatan2(s: f64, c: f64) -> f64 {
 }
 
 pub(crate) fn tanaddatan(x: f64, y: f64) -> (f64, f64) {
-    let xm = x.abs();
-    let ym = y.abs();
+    let xs = x.abs().min(1f64) * x.signum();
+    let xu = x.abs().max(1f64);
 
-    let xs = x.signum();
-    let ys = y.signum();
+    let ys = y.abs().min(1f64) * y.signum();
+    let yu = y.abs().max(1f64);
 
-    match (xm <= 1f64, ym <= 1f64) {
-        (true, true) => (x + y, x.mul_add(-y, 1f64)),
-        (false, true) => (y.mul_add(xm.recip(), xs), y.mul_add(-xs, xm.recip())),
-        (true, false) => (x.mul_add(ym.recip(), ys), x.mul_add(-ys, ym.recip())),
-        (false, false) => (xs / ym + ys / xm, xm.recip().mul_add(ym.recip(), -xs * ys)),
-    }
+    (xs / yu + ys / xu, xu.recip() * yu.recip() - xs * ys)
 }
 
 pub(crate) fn tansubatan(x: f64, y: f64) -> (f64, f64) {
-    let xm = x.abs();
-    let ym = y.abs();
+    let xs = x.abs().min(1f64) * x.signum();
+    let xu = x.abs().max(1f64);
 
-    let xs = x.signum();
-    let ys = y.signum();
+    let ys = y.abs().min(1f64) * y.signum();
+    let yu = y.abs().max(1f64);
 
-    match (xm <= 1f64, ym <= 1f64) {
-        (true, true) => (x - y, x.mul_add(y, 1f64)),
-        (false, true) => (y.mul_add(-xm.recip(), xs), y.mul_add(xs, xm.recip())),
-        (true, false) => (x.mul_add(ym.recip(), -ys), x.mul_add(ys, ym.recip())),
-        (false, false) => (xs / ym - ys / xm, xm.recip().mul_add(ym.recip(), xs * ys)),
-    }
+    (xs / yu - ys / xu, xu.recip() * yu.recip() + xs * ys)
 }
 
 pub(crate) fn cossubatan(x: f64, y: f64) -> f64 {
