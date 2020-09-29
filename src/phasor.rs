@@ -14,6 +14,7 @@ mod div;
 mod exp;
 mod imag;
 mod ln;
+mod log;
 mod mul;
 mod neg;
 mod norm;
