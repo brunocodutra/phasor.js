@@ -21,7 +21,7 @@ mod tests {
         }
 
         #[test]
-        fn the_logarithm_of_a_nonzero_finite_phasor_has_imaginary_part_equal_to_its_angle(mag in regular(), tan in not_nan()) {
+        fn the_logarithm_of_a_finite_nonzero_phasor_has_imaginary_part_equal_to_its_angle(mag in regular(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.ln().imag(), p.angle());
         }
@@ -33,7 +33,7 @@ mod tests {
         }
 
         #[test]
-        fn the_logarithm_of_a_not_real_unit_phasor_is_purely_imaginary(mag in not_nan(), tan in nonzero()) {
+        fn the_logarithm_of_a_not_real_unit_phasor_is_purely_imaginary(mag in zero(), tan in nonzero()) {
             let p = Phasor { mag: mag.signum(), tan };
             let r = Phasor { mag: p.angle(), tan: f64::INFINITY };
             assert_close_to!(p.ln(), r);

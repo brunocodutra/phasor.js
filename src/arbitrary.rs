@@ -11,6 +11,7 @@ pub(crate) fn nan() -> Any {
 pub(crate) fn infinite() -> Any {
     POSITIVE | NEGATIVE | INFINITE
 }
+
 pub(crate) fn normal() -> Any {
     POSITIVE | NEGATIVE | NORMAL
 }
@@ -23,8 +24,16 @@ pub(crate) fn zero() -> Any {
     POSITIVE | NEGATIVE | ZERO
 }
 
+pub(crate) fn positive() -> Any {
+    POSITIVE | NORMAL | SUBNORMAL
+}
+
+pub(crate) fn negative() -> Any {
+    NEGATIVE | NORMAL | SUBNORMAL
+}
+
 pub(crate) fn not_nan() -> Any {
-    infinite() | normal() | subnormal() | zero()
+    normal() | subnormal() | zero() | infinite()
 }
 
 pub(crate) fn finite() -> Any {
