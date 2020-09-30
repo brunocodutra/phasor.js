@@ -53,7 +53,7 @@ mod tests {
         }
 
         #[test]
-        fn multiplying_phasor_by_its_conjugate_equals_real_phasor_with_the_magnitude_squared(a in not_nan(), b in not_nan()) {
+        fn multiplying_conjugate_phasors_equals_real_phasor_with_the_magnitude_squared(a in not_nan(), b in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = p.conj();
             let r = Phasor { mag: a * a, tan: 0f64 };
@@ -63,7 +63,7 @@ mod tests {
         }
 
         #[test]
-        fn multiplying_normal_phasor_by_its_inverse_equals_one(a in normal(), b in not_nan()) {
+        fn multiplying_inverse_normal_phasors_is_one(a in normal(), b in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = p.recip();
             let r = Phasor { mag: 1f64, tan: 0f64 };

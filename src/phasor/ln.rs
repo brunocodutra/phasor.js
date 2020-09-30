@@ -15,7 +15,7 @@ mod tests {
 
     proptest! {
         #[test]
-        fn the_logarithm_of_a_phasor_has_real_path_equal_to_logarithm_of_its_norm(mag in not_nan(), tan in not_nan()) {
+        fn the_logarithm_of_a_phasor_has_real_part_equal_to_logarithm_of_its_norm(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.ln().real(), p.norm().ln());
         }

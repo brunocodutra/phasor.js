@@ -30,7 +30,7 @@ mod tests {
         }
 
         #[test]
-        fn double_inversion_has_no_effect(mag in zero(), tan in not_nan()) {
+        fn double_inversion_has_no_effect(mag in normal(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.recip().recip(), p);
         }
