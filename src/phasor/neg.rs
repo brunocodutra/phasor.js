@@ -33,7 +33,7 @@ mod tests {
         }
 
         #[test]
-        fn double_negation_has_no_effect(mag in zero(), tan in not_nan()) {
+        fn double_negation_has_no_effect(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.neg().neg(), p);
         }

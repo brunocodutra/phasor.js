@@ -53,7 +53,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_finite_nonzero_phasor_by_itself_equals_one(a in regular(), b in not_nan()) {
+        fn dividing_equal_finite_nonzero_phasors_is_one(a in regular(), b in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let r = Phasor { mag: 1f64, tan: 0f64 };
 
