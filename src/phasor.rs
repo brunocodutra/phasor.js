@@ -9,6 +9,7 @@ mod angle;
 mod approx;
 mod classify;
 mod conj;
+mod cosh;
 mod display;
 mod div;
 mod exp;
@@ -22,6 +23,7 @@ mod polar;
 mod real;
 mod recip;
 mod rect;
+mod sinh;
 mod sub;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
