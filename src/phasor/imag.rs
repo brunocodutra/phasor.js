@@ -25,31 +25,31 @@ mod tests {
 
     proptest! {
         #[test]
-        fn the_imaginary_part_of_a_finite_phasor_equals_magnitude_times_sine_of_angle(mag in finite(), tan in not_nan()) {
+        fn equals_product_of_magnitude_and_sine_of_angle(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.imag(), mag * sinatan(tan));
         }
 
         #[test]
-        fn the_imaginary_part_of_a_real_phasor_is_zero(mag in not_nan(), tan in zero()) {
+        fn is_zero_if_phasor_is_real(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.imag(), 0f64);
         }
 
         #[test]
-        fn the_imaginary_part_of_an_imaginary_phasor_equals_magnitude(mag in not_nan(), tan in infinite()) {
+        fn equals_magnitude_if_phasor_is_imaginary(mag in not_nan(), tan in infinite()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.imag(), mag * tan.signum());
         }
 
         #[test]
-        fn the_imaginary_part_of_a_phasor_with_undefined_magnitude_is_nan(mag in nan(), tan in any()) {
+        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any()) {
             let p = Phasor { mag, tan };
             assert!(p.imag().is_nan());
         }
 
         #[test]
-        fn the_imaginary_part_of_a_phasor_with_undefined_tangent_is_nan(mag in any(), tan in nan()) {
+        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan()) {
             let p = Phasor { mag, tan };
             assert!(p.imag().is_nan());
         }

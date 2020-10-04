@@ -25,37 +25,37 @@ mod tests {
 
     proptest! {
         #[test]
-        fn the_norm_of_a_phasor_is_never_negative(mag in not_nan(), tan in not_nan()) {
+        fn is_never_negative(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert!(!p.norm().is_sign_negative());
         }
 
         #[test]
-        fn the_norm_of_a_phasor_equals_the_modulus_of_the_magnitude(mag in not_nan(), tan in not_nan()) {
+        fn equals_modulus_of_magnitude(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.norm(), mag.abs());
         }
 
         #[test]
-        fn the_norm_of_a_real_phasor_equals_the_modulus_of_the_real_part(mag in not_nan(), tan in zero()) {
+        fn equals_modulus_of_real_part_if_phasor_is_real(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.norm(), p.real().abs());
         }
 
         #[test]
-        fn the_norm_of_a_imaginary_phasor_equals_the_modulus_of_the_imaginary_part(mag in not_nan(), tan in infinite()) {
+        fn equals_modulus_of_imaginary_part_if_imaginary(mag in not_nan(), tan in infinite()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.norm(), p.imag().abs());
         }
 
         #[test]
-        fn the_norm_of_a_phasor_with_undefined_magnitude_is_nan(mag in nan(), tan in any()) {
+        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any()) {
             let p = Phasor { mag, tan };
             assert!(p.norm().is_nan());
         }
 
         #[test]
-        fn the_norm_of_a_phasor_with_undefined_tangent_is_nan(mag in any(), tan in nan()) {
+        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan()) {
             let p = Phasor { mag, tan };
             assert!(p.norm().is_nan());
         }

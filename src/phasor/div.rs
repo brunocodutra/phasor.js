@@ -26,7 +26,7 @@ mod tests {
 
     proptest! {
         #[test]
-        fn dividing_phasors_has_norm_equal_to_ratio_of_norms(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+        fn has_norm_equal_to_ratio_of_norms(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
             prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
 
             let p = Phasor { mag: a, tan: b };
@@ -37,7 +37,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_phasors_has_angle_equal_to_subtraction_of_angles(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+        fn has_angle_equal_to_subtraction_of_angles(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
             prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
 
             let p = Phasor { mag: a, tan: b };
@@ -53,7 +53,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_equal_finite_nonzero_phasors_is_one(a in regular(), b in not_nan()) {
+        fn equals_one_if_phasors_are_equal(a in regular(), b in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let r = Phasor { mag: 1f64, tan: 0f64 };
 
@@ -61,7 +61,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_infinite_phasors_is_nan(a in infinite(), b in not_nan(), c in infinite(), d in not_nan()) {
+        fn is_nan_if_phasors_are_infinite(a in infinite(), b in not_nan(), c in infinite(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
@@ -70,7 +70,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_zero_phasors_is_nan(a in zero(), b in not_nan(), c in zero(), d in not_nan()) {
+        fn is_nan_if_phasors_are_zero(a in zero(), b in not_nan(), c in zero(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
@@ -79,7 +79,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_by_phasor_that_has_undefined_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
+        fn is_nan_if_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
@@ -88,7 +88,7 @@ mod tests {
         }
 
         #[test]
-        fn dividing_by_phasor_that_has_undefined_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
+        fn is_nan_if_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
