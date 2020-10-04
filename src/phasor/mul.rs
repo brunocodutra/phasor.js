@@ -43,11 +43,13 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!((p * q).angle().cos(), (p.angle() + q.angle()).cos());
-            assert_close_to!((p * q).angle().sin(), (p.angle() + q.angle()).sin());
+            let v = p.angle() + q.angle();
 
-            assert_close_to!((q * p).angle().cos(), (p.angle() + q.angle()).cos());
-            assert_close_to!((q * p).angle().sin(), (p.angle() + q.angle()).sin());
+            assert_close_to!((p * q).angle().cos(), v.cos(), tol = 1E-12);
+            assert_close_to!((p * q).angle().sin(), v.sin(), tol = 1E-12);
+
+            assert_close_to!((q * p).angle().cos(), v.cos(), tol = 1E-12);
+            assert_close_to!((q * p).angle().sin(), v.sin(), tol = 1E-12);
         }
 
         #[test]

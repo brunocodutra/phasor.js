@@ -37,17 +37,19 @@ mod tests {
         }
 
         #[test]
-        fn dividing_phasors_has_angle_equal_to_sum_of_angles(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+        fn dividing_phasors_has_angle_equal_to_subtraction_of_angles(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
             prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
 
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!((p / q).angle().cos(), (p.angle() - q.angle()).cos());
-            assert_close_to!((p / q).angle().sin(), (p.angle() - q.angle()).sin());
+            let v = p.angle() - q.angle();
 
-            assert_close_to!((q / p).angle().cos(), (q.angle() - p.angle()).cos());
-            assert_close_to!((q / p).angle().sin(), (q.angle() - p.angle()).sin());
+            assert_close_to!((p / q).angle().cos(), v.cos(), tol = 1E-12);
+            assert_close_to!((p / q).angle().sin(), v.sin(), tol = 1E-12);
+
+            assert_close_to!((q / p).angle().cos(), v.cos(), tol = 1E-12);
+            assert_close_to!((q / p).angle().sin(), -v.sin(), tol = 1E-12);
         }
 
         #[test]
