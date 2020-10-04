@@ -11,6 +11,7 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use crate::assert_close_to;
+    use alloc::format;
     use proptest::prelude::*;
 
     proptest! {
@@ -28,8 +29,10 @@ mod tests {
 
         #[test]
         fn the_exponential_of_the_opposite_of_a_finite_phasor_equals_inverse_of_exponential(mag in finite(), tan in not_nan()) {
+            prop_assume!(mag.exp().classify() == (-mag).exp().recip().classify());
+
             let p = Phasor { mag, tan };
-            assert_close_to!((-p).exp(), p.exp().recip());
+            assert_close_to!(p.exp(), (-p).exp().recip());
         }
 
         #[test]
