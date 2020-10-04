@@ -16,7 +16,7 @@ mod tests {
 
     proptest! {
         #[test]
-        fn the_logarithm_of_a_phasor_to_a_base_is_proportional_to_its_natural_logarithm(mag in not_nan(), tan in not_nan(), b in positive()) {
+        fn is_proportional_to_natural_logarithm(mag in not_nan(), tan in not_nan(), b in positive()) {
             prop_assume!(b != 1f64);
 
             let p = Phasor { mag, tan };
@@ -26,51 +26,51 @@ mod tests {
         }
 
         #[test]
-        fn the_logarithm_of_the_inverse_of_a_normal_finite_phasor_equals_opposite_of_logarithm(mag in normal(), tan in not_nan(), b in positive()) {
+        fn equals_opposite_of_logarithm_of_inverse(mag in normal(), tan in not_nan(), b in positive()) {
             prop_assume!(b != 1f64);
 
             let p = Phasor { mag, tan };
-            assert_close_to!(p.recip().log(b), -p.log(b));
+            assert_close_to!(p.log(b), -p.recip().log(b));
         }
 
         #[test]
-        fn the_logarithm_of_a_finite_nonzero_phasor_to_zero_is_zero(mag in regular(), tan in not_nan(), b in zero()) {
+        fn is_zero_if_base_is_zero_and_phasor_is_finite_and_nonzero(mag in regular(), tan in not_nan(), b in zero()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_zero());
         }
 
         #[test]
-        fn the_logarithm_of_infinite_phasor_to_zero_is_nan(mag in infinite(), tan in not_nan(), b in zero()) {
+        fn is_nan_if_base_is_zero_and_phasor_is_infinite(mag in infinite(), tan in not_nan(), b in zero()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_zero_phasor_to_zero_is_nan(mag in zero(), tan in not_nan(), b in zero()) {
+        fn is_nan_if_base_is_zero_and_phasor_is_zero(mag in zero(), tan in not_nan(), b in zero()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_a_finite_nonzero_phasor_to_infinity_is_zero(mag in regular(), tan in not_nan()) {
+        fn is_zero_if_base_is_infinite_and_phasor_is_finite_and_nonzero(mag in regular(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert!(p.log(f64::INFINITY).is_zero());
         }
 
         #[test]
-        fn the_logarithm_of_infinite_phasor_to_infinity_is_nan(mag in infinite(), tan in not_nan()) {
+        fn is_nan_if_base_is_infinite_and_phasor_is_infinite(mag in infinite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert!(p.log(f64::INFINITY).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_zero_phasor_to_infinity_is_nan(mag in zero(), tan in not_nan()) {
+        fn is_nan_if_base_is_infinite_and_phasor_is_zero(mag in zero(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert!(p.log(f64::INFINITY).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_a_phasor_to_one_is_infinite(mag in not_nan(), tan in not_nan()) {
+        fn is_infinite_if_base_is_one_and_phasor_is_not_one(mag in not_nan(), tan in not_nan()) {
             prop_assume!(mag != 1f64 || tan != 0f64);
 
             let p = Phasor { mag, tan };
@@ -78,31 +78,31 @@ mod tests {
         }
 
         #[test]
-        fn the_logarithm_of_one_to_one_is_nan(tan in zero()) {
+        fn is_nan_if_base_is_one_and_phasor_is_one(tan in zero()) {
             let p = Phasor { mag: 1f64, tan };
             assert!(p.log(1f64).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_a_phasor_to_a_negative_base_is_nan(mag in any(), tan in any(), b in negative()) {
+        fn is_nan_if_base_is_negative(mag in any(), tan in any(), b in negative()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_a_phasor_to_an_undefined_base_is_nan(mag in any(), tan in any(), b in nan()) {
+        fn is_nan_if_base_is_nan(mag in any(), tan in any(), b in nan()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_a_phasor_that_has_undefined_magnitude_is_nan(mag in nan(), tan in any(), b in any()) {
+        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any(), b in any()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_nan());
         }
 
         #[test]
-        fn the_logarithm_of_a_phasor_that_has_undefined_tangent_is_nan(mag in any(), tan in nan(), b in any()) {
+        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan(), b in any()) {
             let p = Phasor { mag, tan };
             assert!(p.log(b).is_nan());
         }

@@ -58,7 +58,7 @@ mod tests {
 
     proptest! {
         #[test]
-        fn adding_finite_nonzero_phasors_equals_sum_of_real_and_imaginary_parts(a in regular(), b in not_nan(), c in regular(), d in not_nan()) {
+        fn equals_sum_of_real_and_imaginary_parts(a in regular(), b in not_nan(), c in regular(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
             let r = Phasor::rect(p.real() + q.real(), p.imag() + q.imag());
@@ -68,7 +68,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_zero_has_no_effect(a in nonzero(), b in not_nan(), c in zero(), d in not_nan()) {
+        fn has_zero_as_identity(a in nonzero(), b in not_nan(), c in zero(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
@@ -77,7 +77,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_infinity_has_no_effect(a in finite(), b in not_nan(), c in infinite(), d in not_nan()) {
+        fn has_infinity_as_identity(a in finite(), b in not_nan(), c in infinite(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
@@ -86,7 +86,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_phasors_with_equal_magnitudes_has_bisector_angle(mag in not_nan(), t in not_nan(), u in not_nan()) {
+        fn has_bisector_angle_if_magnitudes_are_equal(mag in not_nan(), t in not_nan(), u in not_nan()) {
             prop_assume!(!mag.is_infinite() || cossubatan(t, u) != -1f64);
 
             let p = Phasor { mag, tan: t };
@@ -104,7 +104,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_phasors_with_opposite_magnitudes_has_bisector_angle(mag in not_nan(), t in not_nan(), u in not_nan()) {
+        fn has_bisector_angle_if_magnitudes_are_opposite(mag in not_nan(), t in not_nan(), u in not_nan()) {
             prop_assume!(!mag.is_infinite() || cossubatan(t, u) != 1f64);
 
             let p = Phasor { mag, tan: t };
@@ -126,7 +126,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_conjugate_finite_phasors_is_purely_real(mag in not_nan(), tan in not_nan()) {
+        fn is_real_if_phasors_are_conjugate(mag in not_nan(), tan in not_nan()) {
             prop_assume!(!mag.is_infinite() || cossubatan(tan, -tan) != -1f64);
 
             let p = Phasor { mag, tan };
@@ -138,7 +138,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_equal_phasors_has_double_magnitude(mag in not_nan(), tan in not_nan()) {
+        fn has_double_magnitude_if_phasors_are_equal(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: 2f64 * mag, tan };
 
@@ -146,7 +146,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_opposite_finite_phasors_has_zero_magnitude_and_orthogonal_angle(mag in finite(), tan in not_nan()) {
+        fn is_zero_if_phasors_are_finite_and_opposite(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             let q = -p;
             let r = Phasor { mag: 0f64, tan: -tan.recip() };
@@ -156,7 +156,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_opposite_infinite_phasors_is_nan(mag in infinite(), tan in not_nan()) {
+        fn is_nan_if_phasors_are_opposite_and_infinite(mag in infinite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             let q = -p;
 
@@ -165,7 +165,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_phasor_that_has_undefined_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
+        fn is_nan_if_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
@@ -174,7 +174,7 @@ mod tests {
         }
 
         #[test]
-        fn adding_phasor_that_has_undefined_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
+        fn is_nan_if_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 

@@ -16,19 +16,19 @@ mod tests {
 
     proptest! {
         #[test]
-        fn the_exponential_of_a_finite_phasor_has_norm_equal_to_exponential_of_its_real_part(mag in finite(), tan in not_nan()) {
+        fn has_norm_equal_to_exponential_of_real_part(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.exp().norm(), p.real().exp());
         }
 
         #[test]
-        fn the_exponential_of_a_finite_phasor_has_angle_equal_to_its_imaginary_part(mag in finite(), tan in not_nan()) {
+        fn has_angle_equal_to_imaginary_part(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             assert_close_to!(p.exp().angle(), p.imag().sin().atan2(p.imag().cos()));
         }
 
         #[test]
-        fn the_exponential_of_the_opposite_of_a_finite_phasor_equals_inverse_of_exponential(mag in finite(), tan in not_nan()) {
+        fn equals_inverse_of_exponential_of_opposite(mag in finite(), tan in not_nan()) {
             prop_assume!(mag.exp().classify() == (-mag).exp().recip().classify());
 
             let p = Phasor { mag, tan };
@@ -36,33 +36,33 @@ mod tests {
         }
 
         #[test]
-        fn the_exponential_of_a_zero_phasor_is_one(mag in zero(), tan in not_nan()) {
+        fn equals_one_if_phasor_is_zero(mag in zero(), tan in not_nan()) {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: 1f64, tan: 0f64 };
             assert_close_to!(p.exp(), r);
         }
 
         #[test]
-        fn the_exponential_of_a_real_phasor_is_purely_real(mag in not_nan(), tan in zero()) {
+        fn is_real_if_phasor_is_real(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: mag.exp(), tan };
             assert_close_to!(p.exp(), r);
         }
 
         #[test]
-        fn the_exponential_of_a_non_real_infinite_phasor_is_nan(mag in infinite(), tan in nonzero()) {
+        fn is_nan_if_phasor_is_infinite_and_not_real(mag in infinite(), tan in nonzero()) {
             let p = Phasor { mag, tan };
             assert!(p.exp().is_nan());
         }
 
         #[test]
-        fn the_exponential_of_a_phasor_that_has_undefined_magnitude_is_nan(mag in nan(), tan in any()) {
+        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any()) {
             let p = Phasor { mag, tan };
             assert!(p.exp().is_nan());
         }
 
         #[test]
-        fn the_exponential_of_a_phasor_that_has_undefined_tangent_is_nan(mag in any(), tan in nan()) {
+        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan()) {
             let p = Phasor { mag, tan };
             assert!(p.exp().is_nan());
         }
