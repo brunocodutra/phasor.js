@@ -10,28 +10,22 @@ impl Add for Phasor {
         let m = self.mag;
         let n = rhs.mag;
 
-        let i = sinatan2(m, n);
-        let j = cosatan2(m, n);
-
-        let (u, v) = if m.abs() == n.abs() {
-            (m.signum(), n.signum())
-        } else {
-            (i * SQRT_2, j * SQRT_2)
-        };
+        let u = sinatan2(m, n);
+        let v = cosatan2(m, n);
 
         let w = u * cosatan(self.tan);
         let x = u * sinatan(self.tan);
         let y = v * cosatan(rhs.tan);
         let z = v * sinatan(rhs.tan);
 
-        let c = u * v * cossubatan(self.tan, rhs.tan);
+        let c = (SQRT_2 * u) * (SQRT_2 * v) * cossubatan(self.tan, rhs.tan);
         let k = (c.min(1f64).max(-1f64).ln_1p() / 2f64).exp(); // (c + 1f64).sqrt()
 
         Phasor {
             mag: if m.abs() > n.abs() {
-                m.copysign(w + y) * k / i.abs()
+                m.copysign(w + y) * k / u.abs()
             } else {
-                n.copysign(w + y) * k / j.abs()
+                n.copysign(w + y) * k / v.abs()
             },
 
             tan: if x != -z || w != -y {
