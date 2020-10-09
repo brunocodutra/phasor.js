@@ -40,13 +40,7 @@ pub(crate) fn cosatan2(s: f64, c: f64) -> f64 {
 }
 
 pub(crate) fn tanaddatan(x: f64, y: f64) -> (f64, f64) {
-    let xs = x.abs().min(1f64) * x.signum();
-    let xu = x.abs().max(1f64);
-
-    let ys = y.abs().min(1f64) * y.signum();
-    let yu = y.abs().max(1f64);
-
-    (xs / yu + ys / xu, xu.recip() * yu.recip() - xs * ys)
+    tansubatan(x, -y)
 }
 
 pub(crate) fn tansubatan(x: f64, y: f64) -> (f64, f64) {
