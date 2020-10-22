@@ -10,32 +10,32 @@ impl Add for Phasor {
         let m = self.mag;
         let n = rhs.mag;
 
-        let u = sinatan2(m, n);
-        let v = cosatan2(m, n);
+        let u = SQRT_2 * sinatan2(m, n);
+        let v = SQRT_2 * cosatan2(m, n);
 
         let w = u * cosatan(self.tan);
         let x = u * sinatan(self.tan);
         let y = v * cosatan(rhs.tan);
         let z = v * sinatan(rhs.tan);
 
-        let c = (SQRT_2 * u) * (SQRT_2 * v) * cossubatan(self.tan, rhs.tan);
-        let k = (c.min(1f64).max(-1f64).ln_1p() / 2f64).exp(); // (c + 1f64).sqrt()
+        let c = cossubatan(self.tan, rhs.tan).mul_add(u * v, 1f64);
+        let k = SQRT_2 * c.max(0f64).min(2f64).sqrt();
 
         Phasor {
             mag: if m.abs() > n.abs() {
-                m.copysign(w + y) * k / u.abs()
+                m.copysign(w + y) * (k / u.abs())
             } else {
-                n.copysign(w + y) * k / v.abs()
+                n.copysign(w + y) * (k / v.abs())
             },
 
             tan: if x != -z || w != -y {
                 (x + z) / (w + y)
-            } else if 1f64.copysign(w) == 1f64.copysign(y) {
+            } else if w.signum() == y.signum() {
                 w
-            } else if 1f64.copysign(x) == 1f64.copysign(z) {
-                f64::INFINITY.copysign(x)
+            } else if x.signum() == z.signum() {
+                x.recip()
             } else {
-                -w / x
+                -self.tan.recip()
             },
         }
     }
@@ -45,20 +45,31 @@ impl Add for Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::{assert::ulps_or_relative_eq, assert_close_to, trig::tanaddatan};
+    use crate::trig::tanaddatan;
     use alloc::format;
+    use approx::assert_ulps_eq;
     use core::f64::consts::FRAC_PI_2;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
-        fn equals_sum_of_real_and_imaginary_parts(a in regular(), b in not_nan(), c in regular(), d in not_nan()) {
+        fn is_commutative(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+            prop_assume!(!a.is_infinite() || !c.is_infinite() || -cossubatan(b, d) != a.signum() * c.signum());
+
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert_ulps_eq!(p + q, q + p);
+        }
+
+        #[test]
+        fn equals_sum_of_real_and_imaginary_parts(a in normal(), b in not_nan(), c in normal(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
             let r = Phasor::rect(p.real() + q.real(), p.imag() + q.imag());
 
-            assert_close_to!(p + q, r);
-            assert_close_to!(q + p, r);
+            assert_ulps_eq!(p + q, r, max_ulps = 4_000_000);
+            assert_ulps_eq!(q + p, r, max_ulps = 4_000_000);
         }
 
         #[test]
@@ -66,8 +77,8 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!(p + q, p);
-            assert_close_to!(q + p, p);
+            assert_ulps_eq!(p + q, p);
+            assert_ulps_eq!(q + p, p);
         }
 
         #[test]
@@ -75,13 +86,13 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!(p + q, q);
-            assert_close_to!(q + p, q);
+            assert_ulps_eq!(p + q, q);
+            assert_ulps_eq!(q + p, q);
         }
 
         #[test]
         fn has_bisector_angle_if_magnitudes_are_equal(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(!mag.is_infinite() || cossubatan(t, u) != -1f64);
+            prop_assume!(cossubatan(t, u) != -1f64);
 
             let p = Phasor { mag, tan: t };
             let q = Phasor { mag, tan: u };
@@ -93,13 +104,13 @@ mod tests {
                 s.atan2(c) / 2f64,
             );
 
-            assert_close_to!(p + q, r);
-            assert_close_to!(q + p, r);
+            assert_ulps_eq!(p + q, r, epsilon = 1E-8);
+            assert_ulps_eq!(q + p, r, epsilon = 1E-8);
         }
 
         #[test]
         fn has_bisector_angle_if_magnitudes_are_opposite(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(!mag.is_infinite() || cossubatan(t, u) != 1f64);
+            prop_assume!(cossubatan(t, u) != 1f64);
 
             let p = Phasor { mag, tan: t };
             let q = Phasor { mag: -mag, tan: u };
@@ -111,12 +122,8 @@ mod tests {
                 s.atan2(c) / 2f64 + if t < u { -FRAC_PI_2 } else { FRAC_PI_2 },
             );
 
-            if ulps_or_relative_eq(&p, &(-q), 0f64) {
-                assert_close_to!(p + q, q + p);
-            } else {
-                assert_close_to!(p + q, r);
-                assert_close_to!(q + p, r);
-            }
+            assert_ulps_eq!(p + q, r, epsilon = 1E-8);
+            assert_ulps_eq!(q + p, r, epsilon = 1E-8);
         }
 
         #[test]
@@ -125,10 +132,14 @@ mod tests {
 
             let p = Phasor { mag, tan };
             let q = p.conj();
-            let r = Phasor { mag: mag * (1f64 + cossubatan(tan, -tan)).sqrt() * SQRT_2, tan: 0f64 };
 
-            assert_close_to!(p + q, r);
-            assert_close_to!(q + p, r);
+            let r = Phasor {
+                mag: mag * (1f64 + cossubatan(tan, -tan)).sqrt() * SQRT_2,
+                tan: 0f64
+            };
+
+            assert_ulps_eq!(p + q, r);
+            assert_ulps_eq!(q + p, r);
         }
 
         #[test]
@@ -136,7 +147,7 @@ mod tests {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: 2f64 * mag, tan };
 
-            assert_close_to!(p + p, r);
+            assert_ulps_eq!(p + p, r);
         }
 
         #[test]
@@ -145,8 +156,8 @@ mod tests {
             let q = -p;
             let r = Phasor { mag: 0f64, tan: -tan.recip() };
 
-            assert_close_to!(p + q, r);
-            assert_close_to!(q + p, r);
+            assert_ulps_eq!(p + q, r);
+            assert_ulps_eq!(q + p, r);
         }
 
         #[test]

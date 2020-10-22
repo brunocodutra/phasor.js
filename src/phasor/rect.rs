@@ -24,25 +24,29 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
     use alloc::format;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn preserves_finite_real_part(re in finite(), im in finite()) {
-            prop_assume!(re.abs() >= f64::MIN_POSITIVE * im.abs() && re.abs() <= f64::MAX * im.abs());
+            prop_assume!(re.abs() >= f64::MIN_POSITIVE * im.abs());
+            prop_assume!(re.abs() <= f64::MAX * im.abs());
+            prop_assume!(re.hypot(im).is_finite());
 
             let p = Phasor::rect(re, im);
-            assert_close_to!(p.real(), re);
+            assert_ulps_eq!(p.real(), re);
         }
 
         #[test]
         fn preserves_finite_imaginary_part(re in finite(), im in finite()) {
-            prop_assume!(re.abs() >= f64::MIN_POSITIVE * im.abs() && re.abs() <= f64::MAX * im.abs());
+            prop_assume!(re.abs() >= f64::MIN_POSITIVE * im.abs());
+            prop_assume!(re.abs() <= f64::MAX * im.abs());
+            prop_assume!(re.hypot(im).is_finite());
 
             let p = Phasor::rect(re, im);
-            assert_close_to!(p.imag(), im);
+            assert_ulps_eq!(p.imag(), im);
         }
 
         #[test]

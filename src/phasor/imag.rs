@@ -20,26 +20,26 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn equals_product_of_magnitude_and_sine_of_angle(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.imag(), mag * sinatan(tan));
+            assert_ulps_eq!(p.imag(), mag * sinatan(tan));
         }
 
         #[test]
         fn is_zero_if_phasor_is_real(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.imag(), 0f64);
+            assert_ulps_eq!(p.imag(), 0f64);
         }
 
         #[test]
         fn equals_magnitude_if_phasor_is_imaginary(mag in not_nan(), tan in infinite()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.imag(), mag * tan.signum());
+            assert_ulps_eq!(p.imag(), mag * tan.signum());
         }
 
         #[test]

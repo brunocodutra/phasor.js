@@ -1,4 +1,4 @@
-use crate::Phasor;
+use super::Phasor;
 use core::f64::NAN;
 
 #[cfg(target_arch = "wasm32")]
@@ -20,7 +20,7 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
@@ -33,19 +33,19 @@ mod tests {
         #[test]
         fn equals_modulus_of_magnitude(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.norm(), mag.abs());
+            assert_ulps_eq!(p.norm(), mag.abs());
         }
 
         #[test]
         fn equals_modulus_of_real_part_if_phasor_is_real(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.norm(), p.real().abs());
+            assert_ulps_eq!(p.norm(), p.real().abs());
         }
 
         #[test]
         fn equals_modulus_of_imaginary_part_if_imaginary(mag in not_nan(), tan in infinite()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.norm(), p.imag().abs());
+            assert_ulps_eq!(p.norm(), p.imag().abs());
         }
 
         #[test]

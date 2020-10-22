@@ -10,40 +10,40 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn has_real_part_equal_to_logarithm_of_norm(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.ln().real(), p.norm().ln());
+            assert_ulps_eq!(p.ln().real(), p.norm().ln());
         }
 
         #[test]
         fn has_imaginary_part_equal_to_angle(mag in regular(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.ln().imag(), p.angle());
+            assert_ulps_eq!(p.ln().imag(), p.angle());
         }
 
         #[test]
         fn equals_opposite_of_logarithm_of_inverse(mag in normal(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.ln(), -p.recip().ln());
+            assert_ulps_eq!(p.ln(), -p.recip().ln(), epsilon = 1E-15);
         }
 
         #[test]
         fn is_imaginary_if_phasor_is_not_one(mag in zero(), tan in nonzero()) {
             let p = Phasor { mag: mag.signum(), tan };
             let r = Phasor { mag: p.angle(), tan: f64::INFINITY };
-            assert_close_to!(p.ln(), r);
+            assert_ulps_eq!(p.ln(), r);
         }
 
         #[test]
         fn is_real_if_phasor_is_real_and_positive(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag: mag.abs(), tan };
             let r = Phasor { mag: mag.abs().ln(), tan };
-            assert_close_to!(p.ln(), r);
+            assert_ulps_eq!(p.ln(), r);
         }
 
         #[test]

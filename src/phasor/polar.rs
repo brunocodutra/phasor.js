@@ -18,20 +18,20 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn preserves_modulus_of_magnitude(mag in not_nan(), ang in finite()) {
             let p = Phasor::polar(mag, ang);
-            assert_close_to!(p.norm(), mag.abs());
+            assert_ulps_eq!(p.norm(), mag.abs());
         }
 
         #[test]
         fn preserves_angle_if_magnitude_is_positive(mag in not_nan(), ang in finite()) {
             let p = Phasor::polar(mag.abs(), ang);
-            assert_close_to!(p.angle(), ang.sin().atan2(ang.cos()));
+            assert_ulps_eq!(p.angle(), ang.sin().atan2(ang.cos()));
         }
 
         #[test]
