@@ -19,12 +19,22 @@ impl Div for Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
     use alloc::format;
+    use approx::assert_ulps_eq;
     use core::num::FpCategory::{Infinite, Zero};
     use proptest::prelude::*;
 
     proptest! {
+        #[test]
+        fn is_anti_commutative(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+            prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
+
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert_ulps_eq!(p / q, (q / p).recip());
+        }
+
         #[test]
         fn has_norm_equal_to_ratio_of_norms(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
             prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
@@ -32,8 +42,8 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!((p / q).norm(), p.norm() / q.norm());
-            assert_close_to!((q / p).norm(), q.norm() / p.norm());
+            assert_ulps_eq!((p / q).norm(), p.norm() / q.norm());
+            assert_ulps_eq!((q / p).norm(), q.norm() / p.norm());
         }
 
         #[test]
@@ -45,11 +55,11 @@ mod tests {
 
             let v = p.angle() - q.angle();
 
-            assert_close_to!((p / q).angle().cos(), v.cos(), tol = 1E-12);
-            assert_close_to!((p / q).angle().sin(), v.sin(), tol = 1E-12);
+            assert_ulps_eq!((p / q).angle().cos(), v.cos(), epsilon = 8f64 * f64::EPSILON);
+            assert_ulps_eq!((p / q).angle().sin(), v.sin(), epsilon = 8f64 * f64::EPSILON);
 
-            assert_close_to!((q / p).angle().cos(), v.cos(), tol = 1E-12);
-            assert_close_to!((q / p).angle().sin(), -v.sin(), tol = 1E-12);
+            assert_ulps_eq!((q / p).angle().cos(), v.cos(), epsilon = 8f64 * f64::EPSILON);
+            assert_ulps_eq!((q / p).angle().sin(), -v.sin(), epsilon = 8f64 * f64::EPSILON);
         }
 
         #[test]
@@ -57,7 +67,7 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let r = Phasor { mag: 1f64, tan: 0f64 };
 
-            assert_close_to!(p / p, r);
+            assert_ulps_eq!(p / p, r);
         }
 
         #[test]

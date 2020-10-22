@@ -10,8 +10,8 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
     use alloc::format;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
@@ -20,9 +20,7 @@ mod tests {
             prop_assume!(b != 1f64);
 
             let p = Phasor { mag, tan };
-
-            assert_close_to!(p.log(b).real(), p.ln().real() / b.ln());
-            assert_close_to!(p.log(b).imag(), p.ln().imag() / b.ln());
+            assert_ulps_eq!(p.log(b).norm(), p.ln().norm() / b.ln().abs());
         }
 
         #[test]
@@ -30,7 +28,7 @@ mod tests {
             prop_assume!(b != 1f64);
 
             let p = Phasor { mag, tan };
-            assert_close_to!(p.log(b), -p.recip().log(b));
+            assert_ulps_eq!(p.log(b), -p.recip().log(b), epsilon = 1E-15);
         }
 
         #[test]

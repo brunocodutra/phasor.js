@@ -16,14 +16,14 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn has_expected_real_part(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(
+            assert_ulps_eq!(
                 p.cosh().real(),
                 if p.imag().cos().abs() > 0f64 {
                     p.real().cosh() * p.imag().cos()
@@ -36,7 +36,7 @@ mod tests {
         #[test]
         fn has_expected_imaginary_part(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(
+            assert_ulps_eq!(
                 p.cosh().imag(),
                 if p.imag().sin().abs() > 0f64 {
                     p.real().sinh() * p.imag().sin()
@@ -48,29 +48,29 @@ mod tests {
 
         #[test]
         fn equals_sum_of_exponentials(mag in normal(), tan in not_nan()) {
-            let p = Phasor { mag: mag.abs().ln().copysign(mag), tan };
-            let r = (p.exp() + p.exp().recip()) / Phasor::polar(2f64, 0f64);
-            assert_close_to!(p.cosh(), r, tol = 1E-9);
+            let p = Phasor { mag, tan };
+            let r = (p + p.recip()) / Phasor::polar(2f64, 0f64);
+            assert_ulps_eq!(p.ln().cosh(), r, epsilon = 1E-11, max_ulps = 4_000);
         }
 
         #[test]
         fn is_even(mag in finite(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.cosh(), (-p).cosh());
+            assert_ulps_eq!(p.cosh(), (-p).cosh());
         }
 
         #[test]
         fn is_real_if_phasor_is_real(mag in not_nan(), tan in zero()) {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: mag.cosh(), tan };
-            assert_close_to!(p.cosh(), r);
+            assert_ulps_eq!(p.cosh(), r);
         }
 
         #[test]
         fn is_real_if_phasor_is_imaginary(mag in regular(), tan in infinite()) {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: mag.cos(), tan: 0f64 };
-            assert_close_to!(p.cosh(), r);
+            assert_ulps_eq!(p.cosh(), r);
         }
 
         #[test]

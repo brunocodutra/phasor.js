@@ -92,10 +92,10 @@ Extracts the angle of a complex number.
 angle(i(42)) === Math.PI / 2;
 ```
 
-#### closeTo(c1, c2, e = 0)
+#### closeTo(c1, c2, e = Number.EPSILON, ulps = 4)
 
-Compares two complex numbers for equality, optionally taking a positive
-residue for approximate comparisons.
+Compares two complex numbers for approximate equality, optionally taking
+a positive residue and the maximum distance of [Units in the Last Place][ulps].
 
 #### add(c1, c2)
 
@@ -221,3 +221,4 @@ the denominators can take advantage of the [hypot] algorithm, which efficiently 
 [c]:      https://www.npmjs.com/package/complex
 [d]:      https://www.npmjs.com/package/complex-js
 [hypot]:  https://en.wikipedia.org/wiki/Hypot
+[ulps]:   https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/  

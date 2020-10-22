@@ -14,20 +14,30 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use crate::trig::{cossubatan, tanaddatan};
-    use crate::{assert::ulps_or_relative_eq, assert_close_to};
     use alloc::format;
+    use approx::assert_ulps_eq;
     use core::f64::consts::{FRAC_PI_2, SQRT_2};
     use proptest::prelude::*;
 
     proptest! {
         #[test]
-        fn equals_subtraction_of_real_and_imaginary_parts(a in regular(), b in not_nan(), c in regular(), d in not_nan()) {
+        fn is_anti_commutative(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
+            prop_assume!(cossubatan(b, d).abs() != 1f64);
+
+            let p = Phasor { mag: a, tan: b };
+            let q = Phasor { mag: c, tan: d };
+
+            assert_ulps_eq!(p - q, -(q - p));
+        }
+
+        #[test]
+        fn equals_subtraction_of_real_and_imaginary_parts(a in normal(), b in not_nan(), c in normal(), d in not_nan()) {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
             let r = Phasor::rect(p.real() - q.real(), p.imag() - q.imag());
 
-            assert_close_to!(p - q, r);
-            assert_close_to!(q - p, -r);
+            assert_ulps_eq!(p - q, r, max_ulps = 4_000_000);
+            assert_ulps_eq!(q - p, -r, max_ulps = 4_000_000);
         }
 
         #[test]
@@ -35,8 +45,8 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!(p - q, p);
-            assert_close_to!(q - p, -p);
+            assert_ulps_eq!(p - q, p);
+            assert_ulps_eq!(q - p, -p);
         }
 
         #[test]
@@ -44,13 +54,13 @@ mod tests {
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
 
-            assert_close_to!(p - q, -q);
-            assert_close_to!(q - p, q);
+            assert_ulps_eq!(p - q, -q);
+            assert_ulps_eq!(q - p, q);
         }
 
         #[test]
         fn has_tangent_angle_if_magnitudes_are_equal(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(!mag.is_infinite() || cossubatan(t, u) != 1f64);
+            prop_assume!(cossubatan(t, u) != 1f64);
 
             let p = Phasor { mag, tan: t };
             let q = Phasor { mag, tan: u };
@@ -62,17 +72,13 @@ mod tests {
                 s.atan2(c) / 2f64 + if t < u { -FRAC_PI_2 } else { FRAC_PI_2 },
             );
 
-            if ulps_or_relative_eq(&p, &q, 0f64) {
-                assert_close_to!(p - q, -q + p);
-            } else {
-                assert_close_to!(p - q, r);
-                assert_close_to!(q - p, -r);
-            }
+            assert_ulps_eq!(p - q, r, epsilon = 1E-8);
+            assert_ulps_eq!(q - p, -r, epsilon = 1E-8);
         }
 
         #[test]
         fn has_tangent_angle_if_magnitudes_are_opposite(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(!mag.is_infinite() || cossubatan(t, u) != -1f64);
+            prop_assume!(cossubatan(t, u) != -1f64);
 
             let p = Phasor { mag, tan: t };
             let q = Phasor { mag: -mag, tan: u };
@@ -84,8 +90,8 @@ mod tests {
                 s.atan2(c) / 2f64,
             );
 
-            assert_close_to!(p - q, r);
-            assert_close_to!(q - p, -r);
+            assert_ulps_eq!(p - q, r, epsilon = 1E-8);
+            assert_ulps_eq!(q - p, -r, epsilon = 1E-8);
         }
 
         #[test]
@@ -94,10 +100,14 @@ mod tests {
 
             let p = Phasor { mag, tan };
             let q = p.conj();
-            let r = Phasor { mag: mag * (1f64 - cossubatan(tan, -tan)).sqrt() * SQRT_2, tan: f64::INFINITY.copysign(tan) };
 
-            assert_close_to!(p - q, r);
-            assert_close_to!(q - p, -r);
+            let r = Phasor {
+                mag: mag * (1f64 - cossubatan(tan, -tan)).sqrt() * SQRT_2,
+                tan: f64::INFINITY.copysign(tan)
+            };
+
+            assert_ulps_eq!(p - q, r);
+            assert_ulps_eq!(q - p, -r);
         }
 
         #[test]
@@ -105,7 +115,7 @@ mod tests {
             let p = Phasor { mag, tan };
             let r = Phasor { mag: 0f64, tan: -tan.recip() };
 
-            assert_close_to!(p - p, r);
+            assert_ulps_eq!(p - p, r);
         }
 
         #[test]
@@ -114,8 +124,8 @@ mod tests {
             let q = -p;
             let r = Phasor { mag: 2f64 * mag, tan };
 
-            assert_close_to!(p - q, r);
-            assert_close_to!(q - p, -r);
+            assert_ulps_eq!(p - q, r);
+            assert_ulps_eq!(q - p, -r);
         }
 
         #[test]

@@ -13,26 +13,26 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn preserves_real_part(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.conj().real(), p.real());
+            assert_ulps_eq!(p.conj().real(), p.real());
         }
 
         #[test]
         fn negates_imaginary_part(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.conj().imag(), -p.imag());
+            assert_ulps_eq!(p.conj().imag(), -p.imag());
         }
 
         #[test]
         fn is_its_own_inverse_function(mag in not_nan(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.conj().conj(), p);
+            assert_ulps_eq!(p.conj().conj(), p);
         }
 
         #[test]

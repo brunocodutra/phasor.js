@@ -3,11 +3,11 @@
 #[cfg(test)]
 extern crate alloc;
 
-mod assert;
 mod phasor;
 mod trig;
 
 pub use crate::phasor::Phasor;
+pub use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 #[cfg(target_arch = "wasm32")]
 mod js;

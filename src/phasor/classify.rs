@@ -1,4 +1,4 @@
-use crate::Phasor;
+use super::Phasor;
 use core::num::FpCategory;
 
 #[cfg(target_arch = "wasm32")]

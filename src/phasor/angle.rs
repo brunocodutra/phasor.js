@@ -1,4 +1,4 @@
-use crate::Phasor;
+use super::Phasor;
 use core::f64::{consts::PI, NAN};
 
 #[cfg(target_arch = "wasm32")]
@@ -22,7 +22,7 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::assert_close_to;
+    use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
     proptest! {
@@ -35,7 +35,7 @@ mod tests {
         #[test]
         fn equals_arc_formed_by_imaginary_and_real_parts(mag in regular(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_close_to!(p.angle(), p.imag().atan2(p.real()), tol = 1E-12);
+            assert_ulps_eq!(p.angle(), p.imag().atan2(p.real()), epsilon = 1E-12);
         }
 
         #[test]
