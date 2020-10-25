@@ -1,12 +1,7 @@
 use super::Phasor;
 use core::f64::{consts::PI, NAN};
 
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
-    #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn angle(&self) -> f64 {
         if self.is_nan() {
             NAN
@@ -18,7 +13,7 @@ impl Phasor {
     }
 }
 
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
@@ -35,7 +30,7 @@ mod tests {
         #[test]
         fn equals_arc_formed_by_imaginary_and_real_parts(mag in regular(), tan in not_nan()) {
             let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.angle(), p.imag().atan2(p.real()), epsilon = 1E-12);
+            assert_ulps_eq!(p.angle(), p.imag().atan2(p.real()), epsilon = 1E-11);
         }
 
         #[test]

@@ -1,7 +1,4 @@
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
-
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 use proptest_derive::Arbitrary;
 
 mod add;
@@ -26,10 +23,9 @@ mod rect;
 mod sinh;
 mod sub;
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
-#[cfg_attr(all(test, not(target_arch = "wasm32")), derive(Arbitrary))]
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
+#[cfg_attr(test, derive(Arbitrary))]
 pub struct Phasor {
-    mag: f64,
-    tan: f64,
+    pub mag: f64,
+    pub tan: f64,
 }
