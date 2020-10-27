@@ -1,22 +1,18 @@
-import {div, polar} from 'index';
+import { polar } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should divide', () => {
-    samples.forEach(({mag: a, ang: b}) => {
-      samples.forEach(({mag: c, ang: d}) => {
-        if ((isFinite(a) || isFinite(c)) && (a !== 0 || c !== 0)) {
-          const u = polar(a, b);
-          const v = polar(c, d);
+    samples.forEach(({ mag: a, ang: b }) => {
+      samples.forEach(({ mag: c, ang: d }) => {
+        const u = polar(a, b);
+        const v = polar(c, d);
+
+        if (!u.isZero() || !v.isZero()) {
           const r = polar(a / c, b - d);
-          expect(div(u, v)).toBeCloseTo(r);
+          expect(u.div(v)).toBeCloseTo(r, 4);
         }
       });
-
-      expect(div(polar(a, b), polar(NaN))).toBeNaN();
-      expect(div(polar(a, b), polar(0, NaN))).toBeNaN();
-      expect(div(polar(a, b), polar(NaN, NaN))).toBeNaN();
     });
   });
 });

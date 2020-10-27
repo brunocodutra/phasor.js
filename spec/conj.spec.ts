@@ -1,16 +1,11 @@
-import {conj, polar, rect} from 'index';
+import { polar, rect } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should have a conjugate', () => {
-    samples.forEach(({real: re, imag: im, mag, ang}) => {
-      expect(conj(rect(re, im))).toBeCloseTo(rect(re, -im));
-      expect(conj(polar(mag, ang))).toBeCloseTo(polar(mag, -ang));
+    samples.forEach(({ re, im, mag, ang }) => {
+      expect(rect(re, im).conj()).toBeCloseTo(rect(re, -im));
+      expect(polar(mag, ang).conj()).toBeCloseTo(polar(mag, -ang));
     });
-
-    expect(conj(rect(NaN))).toBeNaN();
-    expect(conj(rect(0, NaN))).toBeNaN();
-    expect(conj(rect(NaN, NaN))).toBeNaN();
   });
 });

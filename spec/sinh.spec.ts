@@ -1,20 +1,16 @@
-import {div, polar, rect, sinh, sub} from 'index';
+import { polar, rect } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should have a hyperbolic sine', () => {
-    samples.forEach(({mag, ang}) => {
-      if (isFinite(mag)) {
+    samples.forEach(({ mag, ang }) => {
+      const u = rect(Math.log(mag), ang);
+
+      if (!u.isZero()) {
         const s = polar(mag, ang);
-        const u = rect(Math.log(mag), ang);
-        const r = sub(div(s, rect(2)), div(rect(0.5), s));
-        expect(sinh(u)).toBeCloseTo(r);
+        const r = s.div(rect(2)).sub(rect(0.5).div(s));
+        expect(u.sinh()).toBeCloseTo(r, 40);
       }
     });
-
-    expect(sinh(rect(NaN))).toBeNaN();
-    expect(sinh(rect(0, NaN))).toBeNaN();
-    expect(sinh(rect(NaN, NaN))).toBeNaN();
   });
 });

@@ -1,20 +1,13 @@
-import {add, cosh, div, polar, rect} from 'index';
+import { polar, rect } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should have a hyperbolic cosine', () => {
-    samples.forEach(({mag, ang}) => {
-      if (isFinite(mag)) {
-        const s = polar(mag, ang);
-        const u = rect(Math.log(mag), ang);
-        const r = add(div(s, rect(2)), div(rect(0.5), s));
-        expect(cosh(u)).toBeCloseTo(r);
-      }
+    samples.forEach(({ mag, ang }) => {
+      const s = polar(mag, ang);
+      const u = rect(Math.log(mag), ang);
+      const r = s.div(rect(2)).add(rect(0.5).div(s));
+      expect(u.cosh()).toBeCloseTo(r, 40);
     });
-
-    expect(cosh(rect(NaN))).toBeNaN();
-    expect(cosh(rect(0, NaN))).toBeNaN();
-    expect(cosh(rect(NaN, NaN))).toBeNaN();
   });
 });
