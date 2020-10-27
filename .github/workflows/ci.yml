@@ -139,14 +139,6 @@ jobs:
     - run: npm install
     - run: npm test
 
-  check-package-lock:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-    - uses: actions/checkout@master
-    - run: npm install
-    - run: git diff --exit-code
-
   upgrade:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule'
