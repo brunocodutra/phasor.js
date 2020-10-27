@@ -1,16 +1,11 @@
-import {real, rect} from 'index';
+import { rect } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should have a real part', () => {
-    samples.forEach(({real: re, imag: im}) => {
-      expect(real(rect(re))).toBeCloseTo(re);
-      expect(real(rect(re, im))).toBeCloseTo(re);
+    samples.forEach(({ re, im }) => {
+      expect(rect(re).real()).toBeCloseTo(re);
+      expect(rect(re, im).real()).toBeCloseTo(re);
     });
-
-    expect(real(rect(NaN))).toBeNaN();
-    expect(real(rect(0, NaN))).toBeNaN();
-    expect(real(rect(NaN, NaN))).toBeNaN();
   });
 });
