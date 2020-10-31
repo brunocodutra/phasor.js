@@ -1,12 +1,7 @@
 use super::Phasor;
 use core::f64::NAN;
 
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
-    #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn norm(&self) -> f64 {
         if self.is_nan() {
             NAN
@@ -16,7 +11,7 @@ impl Phasor {
     }
 }
 
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};

@@ -1,39 +1,31 @@
 use super::Phasor;
-use crate::trig::{cosatan, cosatan2, cossubatan, sinatan, sinatan2};
-use core::{f64::consts::SQRT_2, ops::Add};
+use crate::trig::{cosatan, cosatan2, sinatan, sinatan2};
+use core::{num::FpCategory::Zero, ops::Add};
 
 impl Add for Phasor {
     type Output = Self;
 
-    #[allow(clippy::float_cmp, clippy::many_single_char_names)]
     fn add(self, rhs: Self) -> Self::Output {
-        let m = self.mag;
-        let n = rhs.mag;
+        let u = sinatan2(self.mag, rhs.mag);
+        let v = cosatan2(self.mag, rhs.mag);
 
-        let u = SQRT_2 * sinatan2(m, n);
-        let v = SQRT_2 * cosatan2(m, n);
-
-        let w = u * cosatan(self.tan);
-        let x = u * sinatan(self.tan);
-        let y = v * cosatan(rhs.tan);
-        let z = v * sinatan(rhs.tan);
-
-        let c = cossubatan(self.tan, rhs.tan).mul_add(u * v, 1f64);
-        let k = SQRT_2 * c.max(0f64).min(2f64).sqrt();
+        let (ure, uim) = (u * cosatan(self.tan), u * sinatan(self.tan));
+        let (vre, vim) = (v * cosatan(rhs.tan), v * sinatan(rhs.tan));
+        let (re, im) = (ure + vre, uim + vim);
 
         Phasor {
-            mag: if m.abs() > n.abs() {
-                m.copysign(w + y) * (k / u.abs())
+            mag: if u.abs() > v.abs() {
+                (re / u).hypot(im / u) * self.mag.copysign(re)
             } else {
-                n.copysign(w + y) * (k / v.abs())
+                (re / v).hypot(im / v) * rhs.mag.copysign(re)
             },
 
-            tan: if x != -z || w != -y {
-                (x + z) / (w + y)
-            } else if w.signum() == y.signum() {
-                w
-            } else if x.signum() == z.signum() {
-                x.recip()
+            tan: if im.classify() != Zero || re.classify() != Zero {
+                im / re
+            } else if ure.is_sign_negative() == vre.is_sign_negative() {
+                ure
+            } else if uim.is_sign_negative() == vim.is_sign_negative() {
+                uim.recip()
             } else {
                 -self.tan.recip()
             },
@@ -41,23 +33,23 @@ impl Add for Phasor {
     }
 }
 
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use crate::trig::tanaddatan;
+    use crate::trig::{cossubatan, tanaddatan};
     use alloc::format;
-    use approx::assert_ulps_eq;
-    use core::f64::consts::FRAC_PI_2;
+    use approx::{assert_ulps_eq, ulps_eq};
+    use core::f64::consts::{FRAC_PI_2, SQRT_2};
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn is_commutative(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
-            prop_assume!(!a.is_infinite() || !c.is_infinite() || -cossubatan(b, d) != a.signum() * c.signum());
-
             let p = Phasor { mag: a, tan: b };
             let q = Phasor { mag: c, tan: d };
+
+            prop_assume!(!p.is_infinite() || !q.is_infinite() || !ulps_eq!(p, -q));
 
             assert_ulps_eq!(p + q, q + p);
         }
@@ -68,8 +60,8 @@ mod tests {
             let q = Phasor { mag: c, tan: d };
             let r = Phasor::rect(p.real() + q.real(), p.imag() + q.imag());
 
-            assert_ulps_eq!(p + q, r, max_ulps = 4_000_000);
-            assert_ulps_eq!(q + p, r, max_ulps = 4_000_000);
+            assert_ulps_eq!(p + q, r, max_ulps = 800);
+            assert_ulps_eq!(q + p, r, max_ulps = 800);
         }
 
         #[test]
@@ -92,7 +84,7 @@ mod tests {
 
         #[test]
         fn has_bisector_angle_if_magnitudes_are_equal(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(cossubatan(t, u) != -1f64);
+            prop_assume!(cossubatan(t, u) > -0.9f64);
 
             let p = Phasor { mag, tan: t };
             let q = Phasor { mag, tan: u };
@@ -104,13 +96,13 @@ mod tests {
                 s.atan2(c) / 2f64,
             );
 
-            assert_ulps_eq!(p + q, r, epsilon = 1E-8);
-            assert_ulps_eq!(q + p, r, epsilon = 1E-8);
+            assert_ulps_eq!(p + q, r, max_ulps = 80);
+            assert_ulps_eq!(q + p, r, max_ulps = 80);
         }
 
         #[test]
         fn has_bisector_angle_if_magnitudes_are_opposite(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(cossubatan(t, u) != 1f64);
+            prop_assume!(cossubatan(t, u) < 0.9f64);
 
             let p = Phasor { mag, tan: t };
             let q = Phasor { mag: -mag, tan: u };
@@ -122,24 +114,24 @@ mod tests {
                 s.atan2(c) / 2f64 + if t < u { -FRAC_PI_2 } else { FRAC_PI_2 },
             );
 
-            assert_ulps_eq!(p + q, r, epsilon = 1E-8);
-            assert_ulps_eq!(q + p, r, epsilon = 1E-8);
+            assert_ulps_eq!(p + q, r, max_ulps = 80);
+            assert_ulps_eq!(q + p, r, max_ulps = 80);
         }
 
         #[test]
         fn is_real_if_phasors_are_conjugate(mag in not_nan(), tan in not_nan()) {
-            prop_assume!(!mag.is_infinite() || cossubatan(tan, -tan) != -1f64);
-
             let p = Phasor { mag, tan };
             let q = p.conj();
 
             let r = Phasor {
-                mag: mag * (1f64 + cossubatan(tan, -tan)).sqrt() * SQRT_2,
+                mag: p.real() + q.real(),
                 tan: 0f64
             };
 
-            assert_ulps_eq!(p + q, r);
-            assert_ulps_eq!(q + p, r);
+            prop_assume!(!p.is_infinite() || !p.is_imaginary());
+
+            assert_ulps_eq!(p + q, r, max_ulps = 40);
+            assert_ulps_eq!(q + p, r, max_ulps = 40);
         }
 
         #[test]

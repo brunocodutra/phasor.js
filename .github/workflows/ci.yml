@@ -122,10 +122,10 @@ jobs:
     - uses: hecrj/setup-rust-action@master
       with:
         rust-version: nightly
-    - uses: jetli/wasm-pack-action@v0.3.0
-    - run: wasm-pack test --headless --${{ matrix.browser }}
+    - run: npm install wasm-pack
+    - run: npx wasm-pack test --headless --${{ matrix.browser }}
     
-  node:
+  nodejs:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
@@ -133,21 +133,11 @@ jobs:
     - uses: hecrj/setup-rust-action@master
       with:
         rust-version: nightly
-    - uses: jetli/wasm-pack-action@v0.3.0
-    - run: wasm-pack build --target nodejs
     - uses: actions/setup-node@v1
       with:
         node-version: 14.x
     - run: npm install
     - run: npm test
-
-  check-package-lock:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-    - uses: actions/checkout@master
-    - run: npm install
-    - run: git diff --exit-code
 
   upgrade:
     runs-on: ubuntu-latest
@@ -159,8 +149,11 @@ jobs:
         rust-version: stable
     - run: cargo +stable install cargo-edit
     - run: cargo upgrade
+    - run: npm install
+    - run: npm upgrade
+    - run: npm audit fix
     - uses: peter-evans/create-pull-request@v2
       with:
         title: "Upgrade dependencies"
         branch: "bot/upgrade"
-        commit-message: "cargo upgrade"
+        commit-message: "cargo upgrade && npm upgrade && npm audit fix"

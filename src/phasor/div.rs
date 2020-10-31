@@ -15,7 +15,7 @@ impl Div for Phasor {
     }
 }
 
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};

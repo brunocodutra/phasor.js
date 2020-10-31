@@ -1,17 +1,12 @@
-import {norm, polar} from 'index';
+import { polar } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should have a magnitude', () => {
-    samples.forEach(({mag, ang}) => {
+    samples.forEach(({ mag, ang }) => {
       const r = Math.abs(mag);
-      expect(norm(polar(mag))).toBeCloseTo(r);
-      expect(norm(polar(mag, ang))).toBeCloseTo(r);
+      expect(polar(mag).norm()).toBeCloseTo(r);
+      expect(polar(mag, ang).norm()).toBeCloseTo(r);
     });
-
-    expect(norm(polar(NaN))).toBeNaN();
-    expect(norm(polar(0, NaN))).toBeNaN();
-    expect(norm(polar(NaN, NaN))).toBeNaN();
   });
 });

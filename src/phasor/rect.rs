@@ -1,12 +1,7 @@
 use super::Phasor;
 use core::num::FpCategory;
 
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
-
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
-    #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn rect(re: f64, im: f64) -> Self {
         Phasor {
             mag: re.hypot(im).copysign(re),
@@ -20,7 +15,7 @@ impl Phasor {
     }
 }
 
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};

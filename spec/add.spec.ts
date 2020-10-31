@@ -1,22 +1,18 @@
-import {add, rect} from 'index';
+import { rect } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should add', () => {
-    samples.forEach(({real: a, imag: b}) => {
-      samples.forEach(({real: c, imag: d}) => {
-        if ((isFinite(a) || isFinite(c) || a === c) && (isFinite(b) || isFinite(d) || b === d)) {
-          const u = rect(a, b);
-          const v = rect(c, d);
+    samples.forEach(({ re: a, im: b }) => {
+      samples.forEach(({ re: c, im: d }) => {
+        const u = rect(a, b);
+        const v = rect(c, d);
+
+        if (!u.isCloseTo(v.neg(), 1E-15)) {
           const r = rect(a + c, b + d);
-          expect(add(u, v)).toBeCloseTo(r);
+          expect(u.add(v)).toBeCloseTo(r, 8);
         }
       });
-
-      expect(add(rect(a, b), rect(NaN))).toBeNaN();
-      expect(add(rect(a, b), rect(0, NaN))).toBeNaN();
-      expect(add(rect(a, b), rect(NaN, NaN))).toBeNaN();
     });
   });
 });

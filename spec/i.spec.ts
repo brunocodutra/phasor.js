@@ -1,14 +1,10 @@
-import {i, rect} from 'index';
+import { i, polar } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should have an imaginary unit', () => {
-    samples.forEach(({mag}) => {
-      expect(i(mag)).toEqual(rect(0, mag));
+    samples.forEach(({ im }) => {
+      expect(i(im)).toBeCloseTo(polar(im, Math.PI / 2));
     });
-
-    expect(i()).toEqual(i(1));
-    expect(i(NaN)).toBeNaN();
   });
 });

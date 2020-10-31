@@ -1,43 +1,39 @@
-import {matcherHint, printExpected, printReceived} from 'jest-matcher-utils';
+import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
 
-import {isComplex, Complex, closeTo} from 'index';
+import { Phasor, polar } from '../';
 
 export default {
-  toBeCloseTo(x: number | Complex, y: number | Complex, e = 1E-6) {
-    const pass = (
-        (typeof x === 'number' && typeof y === 'number')
-      ? (x === y) || (Math.abs(x - y) < e) || (Math.abs(x - y) / Math.hypot(x, y)) < e
-      : (isComplex(x) && isComplex(y))
-      ? closeTo(x, y, e)
-      : false
-    );
+  toBeCloseTo(x: number | Phasor, y: number | Phasor, ulps?: number) {
+    const p: Phasor = typeof x === 'number' ? polar(x) : x;
+    const q: Phasor = typeof y === 'number' ? polar(y) : y;
+    const pass = p.isCloseTo(q, ulps && ulps * Number.EPSILON, ulps);
 
     const message = (
-        pass
-      ? () =>
-        matcherHint('.not.toBeCloseTo', 'received', 'expected, precision') +
-        '\n\n' +
-        `Expected value not to be close to (with relative precision of ${printExpected(e)}):\n` +
-        `  ${printExpected(y)}\n` +
-        `Received:\n` +
-        `  ${printReceived(x)}`
-      : () =>
-        matcherHint('.toBeCloseTo', 'received', 'expected, precision') +
-        '\n\n' +
-        `Expected value to be close to (with relative precision of ${printExpected(e)}):\n` +
-        `  ${printExpected(y)}\n` +
-        `Received:\n` +
-        `  ${printReceived(x)}`
+      pass
+        ? () =>
+          matcherHint('.not.toBeCloseTo', 'received', 'expected, precision') +
+          '\n\n' +
+          `Expected value not to be close to (within ${printExpected(ulps)} ulps):\n` +
+          `  ${printExpected(y)}\n` +
+          `Received:\n` +
+          `  ${printReceived(x)}`
+        : () =>
+          matcherHint('.toBeCloseTo', 'received', 'expected, precision') +
+          '\n\n' +
+          `Expected value to be close to (within ${printExpected(ulps)} ulps):\n` +
+          `  ${printExpected(y)}\n` +
+          `Received:\n` +
+          `  ${printReceived(x)}`
     );
 
-    return {message, pass};
+    return { message, pass };
   },
 };
 
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toBeCloseTo(y: number | Complex, e?: number): R;
+      toBeCloseTo(y: number | Phasor, e?: number): R;
     }
   }
 }

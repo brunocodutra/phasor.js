@@ -1,22 +1,15 @@
-import {mul, polar} from 'index';
+import { polar } from '../';
+import { samples } from './util';
 
-import {samples} from './util';
-
-describe('Complex', () => {
+describe('Phasor', () => {
   it('should multiply', () => {
-    samples.forEach(({mag: a, ang: b}) => {
-      samples.forEach(({mag: c, ang: d}) => {
-        if ((isFinite(a) || c !== 0) && (a !== 0 || isFinite(c))) {
-          const u = polar(a, b);
-          const v = polar(c, d);
-          const r = polar(a * c, b + d);
-          expect(mul(u, v)).toBeCloseTo(r);
-        }
+    samples.forEach(({ mag: a, ang: b }) => {
+      samples.forEach(({ mag: c, ang: d }) => {
+        const u = polar(a, b);
+        const v = polar(c, d);
+        const r = polar(a * c, b + d);
+        expect(u.mul(v)).toBeCloseTo(r, 4);
       });
-
-      expect(mul(polar(a, b), polar(NaN))).toBeNaN();
-      expect(mul(polar(a, b), polar(0, NaN))).toBeNaN();
-      expect(mul(polar(a, b), polar(NaN, NaN))).toBeNaN();
     });
   });
 });
