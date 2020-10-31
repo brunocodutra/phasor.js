@@ -14,7 +14,7 @@ categories = ["mathematics"]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-approx = "0.3.2"
+approx = "0.4.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.68"
