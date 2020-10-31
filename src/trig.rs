@@ -40,6 +40,7 @@ pub(crate) fn tansubatan(x: f64, y: f64) -> (f64, f64) {
     (xs * yc - xc * ys, xs * ys + xc * yc)
 }
 
+#[cfg(all(test, not(target_arch = "wasm32")))]
 pub(crate) fn cossubatan(x: f64, y: f64) -> f64 {
     let (s, c) = tansubatan(x, y);
     cosatan2(s, c)
