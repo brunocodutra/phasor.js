@@ -33,10 +33,11 @@
   "files": [
     "dist/nodejs/phasor_bg.wasm",
     "dist/nodejs/phasor.js",
-    "dist/nodejs/phasor_bg.js",
+    "dist/bundler/phasor_bg.js",
     "dist/bundler/phasor_bg.wasm",
-    "dist/bundler/phasor.js",
-    "dist/bundler/phasor.d.ts"
+    "dist/bundler/phasor_bg.wasm.d.ts",
+    "dist/bundler/phasor.d.ts",
+    "dist/bundler/phasor.js"
   ],
   "devDependencies": {
     "@types/jest": "^26.0.10",
