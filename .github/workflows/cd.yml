@@ -1,0 +1,19 @@
+name: CD
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: nightly
+    - run: npm install
+    - run: npm run build
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
