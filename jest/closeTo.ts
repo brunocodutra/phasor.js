@@ -6,7 +6,7 @@ export default {
   toBeCloseTo(x: number | Phasor, y: number | Phasor, ulps?: number) {
     const p: Phasor = typeof x === 'number' ? polar(x) : x;
     const q: Phasor = typeof y === 'number' ? polar(y) : y;
-    const pass = p.isCloseTo(q, ulps && ulps * Number.EPSILON, ulps);
+    const pass = p.ulpsEq(q, ulps && ulps * Number.EPSILON, ulps);
 
     const message = (
       pass

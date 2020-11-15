@@ -32,9 +32,9 @@ Phasor.js on the other hand successfully passes all of the following
 assertions.
 
 ```.js
-i(Infinity).mul(i(-Infinity)).isCloseTo(rect(Infinity));
-i(1E200).div(i(1E200)).isCloseTo(rect(1));
-i(1E-200).div(i(1E-200)).isCloseTo(rect(1));
+i(Infinity).mul(i(-Infinity)).ulpsEq(rect(Infinity));
+i(1E200).div(i(1E200)).ulpsEq(rect(1));
+i(1E-200).div(i(1E-200)).ulpsEq(rect(1));
 ```
 
 In 2020, Phasor.js was re-implemented from scratch in Rust.
@@ -55,7 +55,7 @@ Constructs a purely imaginary number.
 
 > Example:
 ```{.js}
-i(42).isCloseTo(rect(0, 42));
+i(42).ulpsEq(rect(0, 42));
 ```
 
 #### p.real()
@@ -96,7 +96,17 @@ Extracts the angle of a complex number.
 rect(3, 4).angle() === Math.atan2(4, 3);
 ```
 
-#### isCloseTo(c1, c2, e = Number.EPSILON, ulps = 4)
+#### absDiffEq(c1, c2, e = Number.EPSILON)
+
+Compares two complex numbers for approximate equality, optionally taking
+a positive residue.
+
+#### relativeEq(c1, c2, e = Number.EPSILON, rel = Number.EPSILON)
+
+Compares two complex numbers for approximate equality, optionally taking
+a positive residue and a maximum relative distance.
+
+#### ulpsEq(c1, c2, e = Number.EPSILON, ulps = 4)
 
 Compares two complex numbers for approximate equality, optionally taking
 a positive residue and the maximum distance of [Units in the Last Place][ulps].
@@ -107,7 +117,7 @@ Computes the addition of two complex numbers.
 
 > Example:
 ```{.js}
-rect(3).add(rect(0, 4)).isCloseTo(rect(3, 4));
+rect(3).add(rect(0, 4)).ulpsEq(rect(3, 4));
 ```
 
 #### p.sub(q)
@@ -116,7 +126,7 @@ Computes the subtraction of two complex numbers.
 
 > Example:
 ```{.js}
-rect(3).sub(rect(0, 4)).isCloseTo(rect(3, -4));
+rect(3).sub(rect(0, 4)).ulpsEq(rect(3, -4));
 ```
 
 #### p.mul(q)
@@ -125,7 +135,7 @@ Computes the multiplication of two complex numbers.
 
 > Example:
 ```{.js}
-rect(3).mul(rect(0, 4)).isCloseTo(i(12));
+rect(3).mul(rect(0, 4)).ulpsEq(i(12));
 ```
 
 #### p.div(q)
@@ -134,7 +144,7 @@ Computes the division of two complex numbers.
 
 > Example:
 ```{.js}
-rect(3).div(rect(0, 4)).isCloseTo(i(-0.75));
+rect(3).div(rect(0, 4)).ulpsEq(i(-0.75));
 ```
 
 #### p.neg()
@@ -143,7 +153,7 @@ Computes the opposite of a complex number.
 
 > Example:
 ```{.js}
-rect(3, 4).neg().isCloseTo(rect(-3, -4));
+rect(3, 4).neg().ulpsEq(rect(-3, -4));
 ```
 
 #### p.conj()
@@ -152,7 +162,7 @@ Computes the conjugate of a complex number.
 
 > Example:
 ```{.js}
-rect(3, 4).conj().isCloseTo(rect(3, -4));
+rect(3, 4).conj().ulpsEq(rect(3, -4));
 ```
 
 #### p.recip()
@@ -161,7 +171,7 @@ Computes the reciprocal of a complex number.
 
 > Example:
 ```{.js}
-rect(3, 4).recip().isCloseTo(rect(3 / 25, -4 / 25));
+rect(3, 4).recip().ulpsEq(rect(3 / 25, -4 / 25));
 ```
 
 #### p.exp()
@@ -170,7 +180,7 @@ Computes the exponential of a complex number.
 
 > Example:
 ```{.js}
-rect(3, 4).exp().isCloseTo(polar(Math.exp(3), 4));
+rect(3, 4).exp().ulpsEq(polar(Math.exp(3), 4));
 ```
 
 #### p.ln()
@@ -179,7 +189,7 @@ Computes the principal natural logarithm of a complex number.
 
 > Example:
 ```{.js}
-rect(3, 4).ln().isCloseTo(rect(Math.log(5), Math.atan(4 / 3)));
+rect(3, 4).ln().ulpsEq(rect(Math.log(5), Math.atan(4 / 3)));
 ```
 
 #### p.log()
@@ -188,7 +198,7 @@ Computes the principal logarithm of a complex number to an arbitrary base.
 
 > Example:
 ```{.js}
-rect(3, 4).log(10).isCloseTo(rect(Math.log10(5), Math.atan(4 / 3) / Math.log(10)));
+rect(3, 4).log(10).ulpsEq(rect(Math.log10(5), Math.atan(4 / 3) / Math.log(10)));
 ```
 
 #### p.sinh()
@@ -203,7 +213,7 @@ const q = polar(
     Math.atan2(Math.tan(4), Math.tanh(3)),
 );
 
-p.sinh().isCloseTo(q);
+p.sinh().ulpsEq(q);
 ```
 
 #### p.cosh()
@@ -218,7 +228,7 @@ const q = polar(
     Math.atan2(Math.tan(4), 1 / Math.tanh(3)),
 );
 
-p.cosh().isCloseTo(q);
+p.cosh().ulpsEq(q);
 ```
 
 #### p.isNaN()

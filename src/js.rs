@@ -215,8 +215,29 @@ impl Phasor {
         p.is_imaginary().into()
     }
 
-    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isCloseTo"))]
-    pub fn is_close_to(&self, rhs: &Phasor, e: Option<f64>, ulps: Option<f64>) -> bool {
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "absDiffEq"))]
+    pub fn abs_diff_eq(&self, rhs: &Phasor, e: Option<f64>) -> bool {
+        use crate::AbsDiffEq;
+        let p: super::Phasor = (*self).into();
+        let q: super::Phasor = (*rhs).into();
+        let e = e.unwrap_or_else(super::Phasor::default_epsilon);
+
+        p.abs_diff_eq(&q, e)
+    }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "relativeEq"))]
+    pub fn relative_eq(&self, rhs: &Phasor, e: Option<f64>, rel: Option<f64>) -> bool {
+        use crate::{AbsDiffEq, RelativeEq};
+        let p: super::Phasor = (*self).into();
+        let q: super::Phasor = (*rhs).into();
+        let e = e.unwrap_or_else(super::Phasor::default_epsilon);
+        let rel = rel.unwrap_or_else(super::Phasor::default_max_relative);
+
+        p.relative_eq(&q, e, rel)
+    }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "ulpsEq"))]
+    pub fn ulps_eq(&self, rhs: &Phasor, e: Option<f64>, ulps: Option<f64>) -> bool {
         use crate::{AbsDiffEq, UlpsEq};
         let p: super::Phasor = (*self).into();
         let q: super::Phasor = (*rhs).into();
@@ -247,13 +268,13 @@ mod test {
         let q = Phasor::new(Some(5f64), None);
         let r = Phasor::new(Some(5f64), Some(4f64 / 3f64));
 
-        assert!(p.is_close_to(&rect(0f64, None), None, None));
-        assert!(q.is_close_to(&rect(5f64, None), None, None));
-        assert!(r.is_close_to(&rect(3f64, Some(4f64)), None, None));
+        assert!(p.abs_diff_eq(&rect(0f64, None), None));
+        assert!(q.abs_diff_eq(&rect(5f64, None), None));
+        assert!(r.abs_diff_eq(&rect(3f64, Some(4f64)), None));
 
-        assert!(p.is_close_to(&polar(0f64, None), None, None));
-        assert!(q.is_close_to(&polar(5f64, None), None, None));
-        assert!(r.is_close_to(&polar(5f64, Some(4f64.atan2(3f64))), None, None));
+        assert!(p.abs_diff_eq(&polar(0f64, None), None));
+        assert!(q.abs_diff_eq(&polar(5f64, None), None));
+        assert!(r.abs_diff_eq(&polar(5f64, Some(4f64.atan2(3f64))), None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -287,7 +308,7 @@ mod test {
     fn add() {
         let p = rect(3f64, None);
         let q = rect(0f64, Some(4f64));
-        assert!(p.add(&q).is_close_to(&rect(3f64, Some(4f64)), None, None));
+        assert!(p.add(&q).relative_eq(&rect(3f64, Some(4f64)), None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -295,7 +316,7 @@ mod test {
     fn sub() {
         let p = rect(3f64, None);
         let q = rect(0f64, Some(4f64));
-        assert!(p.sub(&q).is_close_to(&rect(3f64, Some(-4f64)), None, None));
+        assert!(p.sub(&q).relative_eq(&rect(3f64, Some(-4f64)), None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -303,7 +324,7 @@ mod test {
     fn mul() {
         let p = rect(3f64, None);
         let q = rect(0f64, Some(4f64));
-        assert!(p.mul(&q).is_close_to(&i(Some(12f64)), None, None));
+        assert!(p.mul(&q).relative_eq(&i(Some(12f64)), None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -311,7 +332,7 @@ mod test {
     fn div() {
         let p = rect(3f64, None);
         let q = rect(0f64, Some(4f64));
-        assert!(p.div(&q).is_close_to(&i(Some(-0.75f64)), None, None));
+        assert!(p.div(&q).relative_eq(&i(Some(-0.75f64)), None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -319,7 +340,7 @@ mod test {
     fn neg() {
         let p = rect(3f64, Some(4f64));
         let q = rect(-3f64, Some(-4f64));
-        assert!(p.neg().is_close_to(&q, None, None));
+        assert!(p.neg().relative_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -327,7 +348,7 @@ mod test {
     fn conj() {
         let p = rect(3f64, Some(4f64));
         let q = rect(3f64, Some(-4f64));
-        assert!(p.conj().is_close_to(&q, None, None));
+        assert!(p.conj().relative_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -335,7 +356,7 @@ mod test {
     fn recip() {
         let p = rect(3f64, Some(4f64));
         let q = rect(3f64 / 25f64, Some(-4f64 / 25f64));
-        assert!(p.recip().is_close_to(&q, None, None));
+        assert!(p.recip().relative_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -343,7 +364,7 @@ mod test {
     fn exp() {
         let p = rect(3f64, Some(4f64));
         let q = polar(3f64.exp(), Some(4f64));
-        assert!(p.exp().is_close_to(&q, None, None));
+        assert!(p.exp().ulps_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -351,7 +372,7 @@ mod test {
     fn ln() {
         let p = rect(3f64, Some(4f64));
         let q = rect(5f64.ln(), Some(4f64.atan2(3f64)));
-        assert!(p.ln().is_close_to(&q, None, None));
+        assert!(p.ln().ulps_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -359,7 +380,7 @@ mod test {
     fn log() {
         let p = rect(3f64, Some(4f64));
         let q = rect(5f64.log10(), Some(4f64.atan2(3f64) / LN_10));
-        assert!(p.log(10f64).is_close_to(&q, None, None));
+        assert!(p.log(10f64).ulps_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -371,7 +392,7 @@ mod test {
             Some(4f64.tan().atan2(3f64.tanh())),
         );
 
-        assert!(p.sinh().is_close_to(&q, None, None));
+        assert!(p.sinh().ulps_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -383,7 +404,7 @@ mod test {
             Some(4f64.tan().atan2(3f64.tanh().recip())),
         );
 
-        assert!(p.cosh().is_close_to(&q, None, None));
+        assert!(p.cosh().ulps_eq(&q, None, None));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
