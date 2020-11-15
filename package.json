@@ -1,6 +1,6 @@
 {
   "name": "phasor.js",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Complex numbers done right",
   "scripts": {
     "build.bundler": "wasm-pack build --target bundler --out-dir dist/bundler",
