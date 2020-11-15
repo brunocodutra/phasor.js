@@ -8,7 +8,7 @@ describe('Phasor', () => {
         const u = rect(a, b);
         const v = rect(c, d);
 
-        if (!u.isCloseTo(v.neg(), 1E-15)) {
+        if (!u.ulpsEq(v.neg(), 1E-15)) {
           const r = rect(a + c, b + d);
           expect(u.add(v)).toBeCloseTo(r, 8);
         }
