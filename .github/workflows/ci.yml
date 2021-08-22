@@ -122,8 +122,8 @@ jobs:
     - uses: hecrj/setup-rust-action@master
       with:
         rust-version: nightly
-    - run: npm install wasm-pack
-    - run: npx wasm-pack test --headless --${{ matrix.browser }}
+    - uses: jetli/wasm-pack-action@v0.3.0
+    - run: wasm-pack test --headless --${{ matrix.browser }}
     
   nodejs:
     needs: [test]
