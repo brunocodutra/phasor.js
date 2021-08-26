@@ -42,9 +42,9 @@ mod tests {
 
         #[test]
         fn connects_norm_and_angle_by_the_unicode_angle_symbol(p: Phasor) {
-            assert!(format!("{}", p).contains("∠"));
-            assert!(format!("{:e}", p).contains("∠"));
-            assert!(format!("{:E}", p).contains("∠"));
+            assert!(format!("{}", p).contains('∠'));
+            assert!(format!("{:e}", p).contains('∠'));
+            assert!(format!("{:E}", p).contains('∠'));
         }
     }
 }
