@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::f64::{consts::PI, NAN};
+use std::f64::{consts::PI, NAN};
 
 impl Phasor {
     pub fn angle(&self) -> f64 {

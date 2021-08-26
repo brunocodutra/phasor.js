@@ -1,6 +1,6 @@
 use super::Phasor;
 use crate::trig::tansubatan;
-use core::ops::Div;
+use std::ops::Div;
 
 impl Div for Phasor {
     type Output = Self;
@@ -19,10 +19,9 @@ impl Div for Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use alloc::format;
     use approx::assert_ulps_eq;
-    use core::num::FpCategory::{Infinite, Zero};
     use proptest::prelude::*;
+    use std::num::FpCategory::{Infinite, Zero};
 
     proptest! {
         #[test]

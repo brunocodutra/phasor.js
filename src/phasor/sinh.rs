@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::num::FpCategory::Zero;
+use std::num::FpCategory::Zero;
 
 impl Phasor {
     pub fn sinh(self) -> Self {

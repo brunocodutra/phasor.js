@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::fmt::{Display, Error, Formatter, LowerExp, UpperExp};
+use std::fmt::{Display, Error, Formatter, LowerExp, UpperExp};
 
 impl Display for Phasor {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
@@ -22,7 +22,6 @@ impl UpperExp for Phasor {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::format;
     use proptest::prelude::*;
 
     proptest! {

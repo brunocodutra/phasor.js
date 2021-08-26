@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::num::FpCategory;
+use std::num::FpCategory;
 
 impl Phasor {
     pub fn classify(&self) -> FpCategory {

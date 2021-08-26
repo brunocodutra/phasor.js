@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::f64::NAN;
+use std::f64::NAN;
 
 impl Phasor {
     pub fn norm(&self) -> f64 {

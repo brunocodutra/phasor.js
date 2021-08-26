@@ -1,4 +1,4 @@
-use core::f64::consts::SQRT_2;
+use std::f64::consts::SQRT_2;
 
 pub(crate) fn sinatan(x: f64) -> f64 {
     sinatan2(x, 1f64)
@@ -51,9 +51,9 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use approx::assert_ulps_eq;
-    use core::f64::consts::FRAC_1_SQRT_2;
-    use core::num::FpCategory::Zero;
     use proptest::prelude::*;
+    use std::f64::consts::FRAC_1_SQRT_2;
+    use std::num::FpCategory::Zero;
 
     proptest! {
         #[test]

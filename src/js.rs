@@ -89,7 +89,7 @@ impl Phasor {
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn add(&self, rhs: &Phasor) -> Phasor {
-        use core::ops::Add;
+        use std::ops::Add;
         let p: super::Phasor = (*self).into();
         let q: super::Phasor = (*rhs).into();
         p.add(q).into()
@@ -97,7 +97,7 @@ impl Phasor {
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn sub(&self, rhs: &Phasor) -> Phasor {
-        use core::ops::Sub;
+        use std::ops::Sub;
         let p: super::Phasor = (*self).into();
         let q: super::Phasor = (*rhs).into();
         p.sub(q).into()
@@ -105,7 +105,7 @@ impl Phasor {
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn mul(&self, rhs: &Phasor) -> Phasor {
-        use core::ops::Mul;
+        use std::ops::Mul;
         let p: super::Phasor = (*self).into();
         let q: super::Phasor = (*rhs).into();
         p.mul(q).into()
@@ -113,7 +113,7 @@ impl Phasor {
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn div(&self, rhs: &Phasor) -> Phasor {
-        use core::ops::Div;
+        use std::ops::Div;
         let p: super::Phasor = (*self).into();
         let q: super::Phasor = (*rhs).into();
         p.div(q).into()
@@ -121,7 +121,7 @@ impl Phasor {
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn neg(&self) -> Phasor {
-        use core::ops::Neg;
+        use std::ops::Neg;
         let p: super::Phasor = (*self).into();
         p.neg().into()
     }
@@ -254,7 +254,7 @@ impl Phasor {
 #[cfg(test)]
 mod test {
     use super::*;
-    use core::f64::consts::LN_10;
+    use std::f64::consts::LN_10;
 
     #[cfg(target_arch = "wasm32")]
     use wasm_bindgen_test::*;

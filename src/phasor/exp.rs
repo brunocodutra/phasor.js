@@ -10,7 +10,6 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use alloc::format;
     use approx::assert_ulps_eq;
     use proptest::prelude::*;
 

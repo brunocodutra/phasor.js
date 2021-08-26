@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::num::FpCategory;
+use std::num::FpCategory;
 
 impl Phasor {
     pub fn rect(re: f64, im: f64) -> Self {
@@ -19,7 +19,6 @@ impl Phasor {
 mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
-    use alloc::format;
     use approx::assert_ulps_eq;
     use proptest::prelude::*;
 
