@@ -17,6 +17,7 @@ pub struct Phasor {
     pub tan: f64,
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<super::Phasor> for Phasor {
     #[inline]
     fn into(self) -> super::Phasor {
@@ -65,25 +66,25 @@ impl Phasor {
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn norm(&self) -> f64 {
         let p: super::Phasor = (*self).into();
-        p.norm().into()
+        p.norm()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn angle(&self) -> f64 {
         let p: super::Phasor = (*self).into();
-        p.angle().into()
+        p.angle()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn real(&self) -> f64 {
         let p: super::Phasor = (*self).into();
-        p.real().into()
+        p.real()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
     pub fn imag(&self) -> f64 {
         let p: super::Phasor = (*self).into();
-        p.imag().into()
+        p.imag()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
@@ -170,49 +171,49 @@ impl Phasor {
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isNaN"))]
     pub fn is_nan(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_nan().into()
+        p.is_nan()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isInfinite"))]
     pub fn is_infinite(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_infinite().into()
+        p.is_infinite()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isFinite"))]
     pub fn is_finite(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_finite().into()
+        p.is_finite()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isZero"))]
     pub fn is_zero(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_zero().into()
+        p.is_zero()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isSubnormal"))]
     pub fn is_subnormal(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_subnormal().into()
+        p.is_subnormal()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isNormal"))]
     pub fn is_normal(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_normal().into()
+        p.is_normal()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isReal"))]
     pub fn is_real(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_real().into()
+        p.is_real()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isImaginary"))]
     pub fn is_imaginary(&self) -> bool {
         let p: super::Phasor = (*self).into();
-        p.is_imaginary().into()
+        p.is_imaginary()
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "absDiffEq"))]
@@ -388,7 +389,7 @@ mod test {
     fn sinh() {
         let p = rect(3f64, Some(4f64));
         let q = polar(
-            -3f64.sinh().hypot(4f64.sin()),
+            -(3f64.sinh().hypot(4f64.sin())),
             Some(4f64.tan().atan2(3f64.tanh())),
         );
 
@@ -400,7 +401,7 @@ mod test {
     fn cosh() {
         let p = rect(3f64, Some(4f64));
         let q = polar(
-            -3f64.sinh().hypot(4f64.cos()),
+            -(3f64.sinh().hypot(4f64.cos())),
             Some(4f64.tan().atan2(3f64.tanh().recip())),
         );
 
