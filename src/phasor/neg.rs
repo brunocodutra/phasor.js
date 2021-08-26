@@ -1,5 +1,5 @@
 use super::Phasor;
-use core::ops::Neg;
+use std::ops::Neg;
 
 impl Neg for Phasor {
     type Output = Self;

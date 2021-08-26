@@ -1,6 +1,6 @@
 use super::Phasor;
 use crate::trig::{cosatan, cosatan2, sinatan, sinatan2};
-use core::{num::FpCategory::Zero, ops::Add};
+use std::{num::FpCategory::Zero, ops::Add};
 
 impl Add for Phasor {
     type Output = Self;
@@ -38,10 +38,9 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use crate::trig::{cossubatan, tanaddatan};
-    use alloc::format;
     use approx::{assert_ulps_eq, ulps_eq};
-    use core::f64::consts::{FRAC_PI_2, SQRT_2};
     use proptest::prelude::*;
+    use std::f64::consts::{FRAC_PI_2, SQRT_2};
 
     proptest! {
         #[test]

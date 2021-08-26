@@ -1,8 +1,4 @@
-#![no_std]
 #![cfg_attr(test, allow(clippy::float_cmp, clippy::eq_op))]
-
-#[cfg(test)]
-extern crate alloc;
 
 mod js;
 mod phasor;
