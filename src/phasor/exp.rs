@@ -11,59 +11,76 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use approx::assert_ulps_eq;
-    use proptest::prelude::*;
+    use proptest::prop_assume;
+    use test_strategy::proptest;
 
-    proptest! {
-        #[test]
-        fn has_norm_equal_to_exponential_of_real_part(mag in finite(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.exp().norm(), p.real().exp());
-        }
+    #[proptest]
+    fn has_norm_equal_to_exponential_of_real_part(
+        #[strategy(finite())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.exp().norm(), p.real().exp());
+    }
 
-        #[test]
-        fn has_angle_equal_to_imaginary_part(mag in finite(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.exp().angle(), p.imag().sin().atan2(p.imag().cos()));
-        }
+    #[proptest]
+    fn has_angle_equal_to_imaginary_part(
+        #[strategy(finite())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.exp().angle(), p.imag().sin().atan2(p.imag().cos()));
+    }
 
-        #[test]
-        fn equals_inverse_of_exponential_of_opposite(mag in finite(), tan in not_nan()) {
-            prop_assume!(mag.exp().classify() == (-mag).exp().recip().classify());
+    #[proptest]
+    fn equals_inverse_of_exponential_of_opposite(
+        #[strategy(finite())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        prop_assume!(mag.exp().classify() == (-mag).exp().recip().classify());
 
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.exp(), (-p).exp().recip());
-        }
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.exp(), (-p).exp().recip());
+    }
 
-        #[test]
-        fn equals_one_if_phasor_is_zero(mag in zero(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            let r = Phasor { mag: 1f64, tan: 0f64 };
-            assert_ulps_eq!(p.exp(), r);
-        }
+    #[proptest]
+    fn equals_one_if_phasor_is_zero(#[strategy(zero())] mag: f64, #[strategy(not_nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        let r = Phasor {
+            mag: 1f64,
+            tan: 0f64,
+        };
+        assert_ulps_eq!(p.exp(), r);
+    }
 
-        #[test]
-        fn is_real_if_phasor_is_real(mag in not_nan(), tan in zero()) {
-            let p = Phasor { mag, tan };
-            let r = Phasor { mag: mag.exp(), tan };
-            assert_ulps_eq!(p.exp(), r);
-        }
+    #[proptest]
+    fn is_real_if_phasor_is_real(#[strategy(not_nan())] mag: f64, #[strategy(zero())] tan: f64) {
+        let p = Phasor { mag, tan };
+        let r = Phasor {
+            mag: mag.exp(),
+            tan,
+        };
+        assert_ulps_eq!(p.exp(), r);
+    }
 
-        #[test]
-        fn is_nan_if_phasor_is_infinite_and_not_real(mag in infinite(), tan in nonzero()) {
-            let p = Phasor { mag, tan };
-            assert!(p.exp().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_phasor_is_infinite_and_not_real(
+        #[strategy(infinite())] mag: f64,
+        #[strategy(nonzero())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert!(p.exp().is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any()) {
-            let p = Phasor { mag, tan };
-            assert!(p.exp().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_magnitude_is_nan(#[strategy(nan())] mag: f64, #[strategy(any())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(p.exp().is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan()) {
-            let p = Phasor { mag, tan };
-            assert!(p.exp().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_tangent_is_nan(#[strategy(any())] mag: f64, #[strategy(nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(p.exp().is_nan());
     }
 }

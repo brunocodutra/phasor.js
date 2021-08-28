@@ -1,5 +1,5 @@
 #[cfg(test)]
-use proptest_derive::Arbitrary;
+use test_strategy::Arbitrary;
 
 mod add;
 mod angle;

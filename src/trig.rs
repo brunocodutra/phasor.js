@@ -51,123 +51,157 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use approx::assert_ulps_eq;
-    use proptest::prelude::*;
     use std::f64::consts::FRAC_1_SQRT_2;
     use std::num::FpCategory::Zero;
+    use test_strategy::proptest;
 
-    proptest! {
-        #[test]
-        fn sinatan_equals_sine_of_atan(x in not_nan()) {
-            assert_ulps_eq!(sinatan(x), x.atan().sin());
+    #[proptest]
+    fn sinatan_equals_sine_of_atan(#[strategy(not_nan())] x: f64) {
+        assert_ulps_eq!(sinatan(x), x.atan().sin());
+    }
+
+    #[proptest]
+    fn sinatan_of_nan_is_nan(#[strategy(nan())] x: f64) {
+        assert!(sinatan(x).is_nan());
+    }
+
+    #[proptest]
+    fn cosatan_equals_cosine_of_atan(#[strategy(not_nan())] x: f64) {
+        assert_ulps_eq!(cosatan(x), x.atan().cos());
+    }
+
+    #[proptest]
+    fn cosatan_of_nan_is_nan(#[strategy(nan())] x: f64) {
+        assert!(cosatan(x).is_nan());
+    }
+
+    #[proptest]
+    fn sinatan2_equals_sine_of_atan2_except_at_the_origin(
+        #[strategy(not_nan())] x: f64,
+        #[strategy(not_nan())] y: f64,
+    ) {
+        if x.classify() != Zero || y.classify() != Zero {
+            assert_ulps_eq!(
+                sinatan2(x, y),
+                x.atan2(y).sin(),
+                epsilon = 2f64 * f64::EPSILON
+            );
+        } else {
+            assert_ulps_eq!(sinatan2(x, y), FRAC_1_SQRT_2.copysign(x));
         }
+    }
 
-        #[test]
-        fn sinatan_of_nan_is_nan(x in nan()) {
-            assert!(sinatan(x).is_nan());
+    #[proptest]
+    fn sinatan2_preserves_sign_of_first_argument(
+        #[strategy(any())] x: f64,
+        #[strategy(any())] y: f64,
+    ) {
+        assert_eq!(1f64.copysign(sinatan2(x, y)), 1f64.copysign(x));
+    }
+
+    #[proptest]
+    fn sinatan2_of_nan_is_nan(#[strategy(nan())] x: f64, #[strategy(any())] y: f64) {
+        assert!(sinatan2(x, y).is_nan());
+        assert!(sinatan2(y, x).is_nan());
+    }
+
+    #[proptest]
+    fn cosatan2_equals_cosine_of_atan2_except_at_the_origin(
+        #[strategy(not_nan())] x: f64,
+        #[strategy(not_nan())] y: f64,
+    ) {
+        if x.classify() != Zero || y.classify() != Zero {
+            assert_ulps_eq!(
+                cosatan2(x, y),
+                x.atan2(y).cos(),
+                epsilon = 2f64 * f64::EPSILON
+            );
+        } else {
+            assert_ulps_eq!(cosatan2(x, y), FRAC_1_SQRT_2.copysign(y));
         }
+    }
 
-        #[test]
-        fn cosatan_equals_cosine_of_atan(x in not_nan()) {
-            assert_ulps_eq!(cosatan(x), x.atan().cos());
-        }
+    #[proptest]
+    fn cosatan2_preserves_sign_of_second_argument(
+        #[strategy(any())] x: f64,
+        #[strategy(any())] y: f64,
+    ) {
+        assert_eq!(1f64.copysign(cosatan2(x, y)), 1f64.copysign(y));
+    }
 
-        #[test]
-        fn cosatan_of_nan_is_nan(x in nan()) {
-            assert!(cosatan(x).is_nan());
-        }
+    #[proptest]
+    fn sinatan2_hypot_cosatan2_equals_one(
+        #[strategy(not_nan())] x: f64,
+        #[strategy(not_nan())] y: f64,
+    ) {
+        assert_ulps_eq!(sinatan2(x, y).hypot(cosatan2(x, y)), 1f64);
+    }
 
-        #[test]
-        fn sinatan2_equals_sine_of_atan2_except_at_the_origin(x in not_nan(), y in not_nan()) {
-            if x.classify() != Zero || y.classify() != Zero {
-                assert_ulps_eq!(sinatan2(x, y), x.atan2(y).sin(), epsilon = 2f64 * f64::EPSILON);
-            } else {
-                assert_ulps_eq!(sinatan2(x, y), FRAC_1_SQRT_2.copysign(x));
-            }
-        }
+    #[proptest]
+    fn cosatan2_of_nan_is_nan(#[strategy(nan())] x: f64, #[strategy(any())] y: f64) {
+        assert!(cosatan2(x, y).is_nan());
+        assert!(cosatan2(y, x).is_nan());
+    }
 
-        #[test]
-        fn sinatan2_preserves_sign_of_first_argument(x in any(), y in any()) {
-            assert_eq!(1f64.copysign(sinatan2(x, y)), 1f64.copysign(x));
-        }
+    #[proptest]
+    fn tanaddatan_equals_tangent_of_the_sum_of_atan(
+        #[strategy(not_nan())] x: f64,
+        #[strategy(not_nan())] y: f64,
+    ) {
+        let (s, c) = tanaddatan(x, y);
+        assert_ulps_eq!(s.atan2(c), x.atan() + y.atan());
+    }
 
-        #[test]
-        fn sinatan2_of_nan_is_nan(x in nan(), y in any()) {
-            assert!(sinatan2(x, y).is_nan());
-            assert!(sinatan2(y, x).is_nan());
-        }
+    #[proptest]
+    fn tanaddatan_of_nan_is_nan(#[strategy(nan())] x: f64, #[strategy(any())] y: f64) {
+        let (s, c) = tanaddatan(x, y);
 
-        #[test]
-        fn cosatan2_equals_cosine_of_atan2_except_at_the_origin(x in not_nan(), y in not_nan()) {
-            if x.classify() != Zero || y.classify() != Zero {
-                assert_ulps_eq!(cosatan2(x, y), x.atan2(y).cos(), epsilon = 2f64 * f64::EPSILON);
-            } else {
-                assert_ulps_eq!(cosatan2(x, y), FRAC_1_SQRT_2.copysign(y));
-            }
-        }
+        assert!(s.is_nan());
+        assert!(c.is_nan());
 
-        #[test]
-        fn cosatan2_preserves_sign_of_second_argument(x in any(), y in any()) {
-            assert_eq!(1f64.copysign(cosatan2(x, y)), 1f64.copysign(y));
-        }
+        let (s, c) = tanaddatan(y, x);
 
-        #[test]
-        fn sinatan2_hypot_cosatan2_equals_one(x in not_nan(), y in not_nan()) {
-            assert_ulps_eq!(sinatan2(x, y).hypot(cosatan2(x, y)), 1f64);
-        }
+        assert!(s.is_nan());
+        assert!(c.is_nan());
+    }
 
-        #[test]
-        fn cosatan2_of_nan_is_nan(x in nan(), y in any()) {
-            assert!(cosatan2(x, y).is_nan());
-            assert!(cosatan2(y, x).is_nan());
-        }
+    #[proptest]
+    fn tansubatan_equals_tangent_of_the_difference_of_atan(
+        #[strategy(not_nan())] x: f64,
+        #[strategy(not_nan())] y: f64,
+    ) {
+        let (s, c) = tansubatan(x, y);
+        assert_ulps_eq!(s.atan2(c), x.atan() - y.atan());
+    }
 
-        #[test]
-        fn tanaddatan_equals_tangent_of_the_sum_of_atan(x in not_nan(), y in not_nan()) {
-            let (s, c) = tanaddatan(x, y);
-            assert_ulps_eq!(s.atan2(c), x.atan() + y.atan());
-        }
+    #[proptest]
+    fn tansubatan_of_nan_is_nan(#[strategy(nan())] x: f64, #[strategy(any())] y: f64) {
+        let (s, c) = tansubatan(x, y);
 
-        #[test]
-        fn tanaddatan_of_nan_is_nan(x in nan(), y in any()) {
-            let (s, c) = tanaddatan(x, y);
+        assert!(s.is_nan());
+        assert!(c.is_nan());
 
-            assert!(s.is_nan());
-            assert!(c.is_nan());
+        let (s, c) = tansubatan(y, x);
 
-            let (s, c) = tanaddatan(y, x);
+        assert!(s.is_nan());
+        assert!(c.is_nan());
+    }
 
-            assert!(s.is_nan());
-            assert!(c.is_nan());
-        }
+    #[proptest]
+    fn cossubatan_equals_cosine_of_the_difference_of_atan(
+        #[strategy(not_nan())] x: f64,
+        #[strategy(not_nan())] y: f64,
+    ) {
+        assert_ulps_eq!(
+            cossubatan(x, y),
+            (x.atan() - y.atan()).cos(),
+            epsilon = 2f64 * f64::EPSILON
+        );
+    }
 
-        #[test]
-        fn tansubatan_equals_tangent_of_the_difference_of_atan(x in not_nan(), y in not_nan()) {
-            let (s, c) = tansubatan(x, y);
-            assert_ulps_eq!(s.atan2(c), x.atan() - y.atan());
-        }
-
-        #[test]
-        fn tansubatan_of_nan_is_nan(x in nan(), y in any()) {
-            let (s, c) = tansubatan(x, y);
-
-            assert!(s.is_nan());
-            assert!(c.is_nan());
-
-            let (s, c) = tansubatan(y, x);
-
-            assert!(s.is_nan());
-            assert!(c.is_nan());
-        }
-
-        #[test]
-        fn cossubatan_equals_cosine_of_the_difference_of_atan(x in not_nan(), y in not_nan()) {
-            assert_ulps_eq!(cossubatan(x, y), (x.atan() - y.atan()).cos(), epsilon = 2f64 * f64::EPSILON);
-        }
-
-        #[test]
-        fn cossubatan_of_nan_is_nan(x in nan(), y in any()) {
-            assert!(cossubatan(x, y).is_nan());
-            assert!(cossubatan(y, x).is_nan());
-        }
+    #[proptest]
+    fn cossubatan_of_nan_is_nan(#[strategy(nan())] x: f64, #[strategy(any())] y: f64) {
+        assert!(cossubatan(x, y).is_nan());
+        assert!(cossubatan(y, x).is_nan());
     }
 }

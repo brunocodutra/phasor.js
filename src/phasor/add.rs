@@ -39,143 +39,198 @@ mod tests {
     use crate::arbitrary::{any, *};
     use crate::trig::{cossubatan, tanaddatan};
     use approx::{assert_ulps_eq, ulps_eq};
-    use proptest::prelude::*;
+    use proptest::prop_assume;
     use std::f64::consts::{FRAC_PI_2, SQRT_2};
+    use test_strategy::proptest;
 
-    proptest! {
-        #[test]
-        fn is_commutative(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_commutative(
+        #[strategy(not_nan())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(not_nan())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            prop_assume!(!p.is_infinite() || !q.is_infinite() || !ulps_eq!(p, -q));
+        prop_assume!(!p.is_infinite() || !q.is_infinite() || !ulps_eq!(p, -q));
 
-            assert_ulps_eq!(p + q, q + p);
-        }
+        assert_ulps_eq!(p + q, q + p);
+    }
 
-        #[test]
-        fn equals_sum_of_real_and_imaginary_parts(a in normal(), b in not_nan(), c in normal(), d in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
-            let r = Phasor::rect(p.real() + q.real(), p.imag() + q.imag());
+    #[proptest]
+    fn equals_sum_of_real_and_imaginary_parts(
+        #[strategy(normal())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(normal())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
+        let r = Phasor::rect(p.real() + q.real(), p.imag() + q.imag());
 
-            assert_ulps_eq!(p + q, r, max_ulps = 800);
-            assert_ulps_eq!(q + p, r, max_ulps = 800);
-        }
+        assert_ulps_eq!(p + q, r, max_ulps = 800);
+        assert_ulps_eq!(q + p, r, max_ulps = 800);
+    }
 
-        #[test]
-        fn has_zero_as_identity(a in nonzero(), b in not_nan(), c in zero(), d in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn has_zero_as_identity(
+        #[strategy(nonzero())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(zero())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert_ulps_eq!(p + q, p);
-            assert_ulps_eq!(q + p, p);
-        }
+        assert_ulps_eq!(p + q, p);
+        assert_ulps_eq!(q + p, p);
+    }
 
-        #[test]
-        fn has_infinity_as_identity(a in finite(), b in not_nan(), c in infinite(), d in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn has_infinity_as_identity(
+        #[strategy(finite())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(infinite())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert_ulps_eq!(p + q, q);
-            assert_ulps_eq!(q + p, q);
-        }
+        assert_ulps_eq!(p + q, q);
+        assert_ulps_eq!(q + p, q);
+    }
 
-        #[test]
-        fn has_bisector_angle_if_magnitudes_are_equal(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(cossubatan(t, u) > -0.9f64);
+    #[proptest]
+    fn has_bisector_angle_if_magnitudes_are_equal(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(not_nan())] t: f64,
+        #[strategy(not_nan())] u: f64,
+    ) {
+        prop_assume!(cossubatan(t, u) > -0.9f64);
 
-            let p = Phasor { mag, tan: t };
-            let q = Phasor { mag, tan: u };
+        let p = Phasor { mag, tan: t };
+        let q = Phasor { mag, tan: u };
 
-            let (s, c) = tanaddatan(t, u);
+        let (s, c) = tanaddatan(t, u);
 
-            let r = Phasor::polar(
-                mag * (1f64 + cossubatan(t, u)).sqrt() * SQRT_2,
-                s.atan2(c) / 2f64,
-            );
+        let r = Phasor::polar(
+            mag * (1f64 + cossubatan(t, u)).sqrt() * SQRT_2,
+            s.atan2(c) / 2f64,
+        );
 
-            assert_ulps_eq!(p + q, r, max_ulps = 80);
-            assert_ulps_eq!(q + p, r, max_ulps = 80);
-        }
+        assert_ulps_eq!(p + q, r, max_ulps = 80);
+        assert_ulps_eq!(q + p, r, max_ulps = 80);
+    }
 
-        #[test]
-        fn has_bisector_angle_if_magnitudes_are_opposite(mag in not_nan(), t in not_nan(), u in not_nan()) {
-            prop_assume!(cossubatan(t, u) < 0.9f64);
+    #[proptest]
+    fn has_bisector_angle_if_magnitudes_are_opposite(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(not_nan())] t: f64,
+        #[strategy(not_nan())] u: f64,
+    ) {
+        prop_assume!(cossubatan(t, u) < 0.9f64);
 
-            let p = Phasor { mag, tan: t };
-            let q = Phasor { mag: -mag, tan: u };
+        let p = Phasor { mag, tan: t };
+        let q = Phasor { mag: -mag, tan: u };
 
-            let (s, c) = tanaddatan(t, u);
+        let (s, c) = tanaddatan(t, u);
 
-            let r = Phasor::polar(
-                mag * (1f64 - cossubatan(t, u)).sqrt() * SQRT_2,
-                s.atan2(c) / 2f64 + if t < u { -FRAC_PI_2 } else { FRAC_PI_2 },
-            );
+        let r = Phasor::polar(
+            mag * (1f64 - cossubatan(t, u)).sqrt() * SQRT_2,
+            s.atan2(c) / 2f64 + if t < u { -FRAC_PI_2 } else { FRAC_PI_2 },
+        );
 
-            assert_ulps_eq!(p + q, r, max_ulps = 80);
-            assert_ulps_eq!(q + p, r, max_ulps = 80);
-        }
+        assert_ulps_eq!(p + q, r, max_ulps = 80);
+        assert_ulps_eq!(q + p, r, max_ulps = 80);
+    }
 
-        #[test]
-        fn is_real_if_phasors_are_conjugate(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            let q = p.conj();
+    #[proptest]
+    fn is_real_if_phasors_are_conjugate(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        let q = p.conj();
 
-            let r = Phasor {
-                mag: p.real() + q.real(),
-                tan: 0f64
-            };
+        let r = Phasor {
+            mag: p.real() + q.real(),
+            tan: 0f64,
+        };
 
-            prop_assume!(!p.is_infinite() || !p.is_imaginary());
+        prop_assume!(!p.is_infinite() || !p.is_imaginary());
 
-            assert_ulps_eq!(p + q, r, max_ulps = 40);
-            assert_ulps_eq!(q + p, r, max_ulps = 40);
-        }
+        assert_ulps_eq!(p + q, r, max_ulps = 40);
+        assert_ulps_eq!(q + p, r, max_ulps = 40);
+    }
 
-        #[test]
-        fn has_double_magnitude_if_phasors_are_equal(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            let r = Phasor { mag: 2f64 * mag, tan };
+    #[proptest]
+    fn has_double_magnitude_if_phasors_are_equal(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        let r = Phasor {
+            mag: 2f64 * mag,
+            tan,
+        };
 
-            assert_ulps_eq!(p + p, r);
-        }
+        assert_ulps_eq!(p + p, r);
+    }
 
-        #[test]
-        fn is_zero_if_phasors_are_finite_and_opposite(mag in finite(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            let q = -p;
-            let r = Phasor { mag: 0f64, tan: -tan.recip() };
+    #[proptest]
+    fn is_zero_if_phasors_are_finite_and_opposite(
+        #[strategy(finite())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        let q = -p;
+        let r = Phasor {
+            mag: 0f64,
+            tan: -tan.recip(),
+        };
 
-            assert_ulps_eq!(p + q, r);
-            assert_ulps_eq!(q + p, r);
-        }
+        assert_ulps_eq!(p + q, r);
+        assert_ulps_eq!(q + p, r);
+    }
 
-        #[test]
-        fn is_nan_if_phasors_are_opposite_and_infinite(mag in infinite(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            let q = -p;
+    #[proptest]
+    fn is_nan_if_phasors_are_opposite_and_infinite(
+        #[strategy(infinite())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        let q = -p;
 
-            assert!((p + q).is_nan());
-            assert!((q + p).is_nan());
-        }
+        assert!((p + q).is_nan());
+        assert!((q + p).is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_nan_if_magnitude_is_nan(
+        #[strategy(any())] a: f64,
+        #[strategy(any())] b: f64,
+        #[strategy(nan())] c: f64,
+        #[strategy(any())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert!((p + q).is_nan());
-            assert!((q + p).is_nan());
-        }
+        assert!((p + q).is_nan());
+        assert!((q + p).is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_nan_if_tangent_is_nan(
+        #[strategy(any())] a: f64,
+        #[strategy(any())] b: f64,
+        #[strategy(any())] c: f64,
+        #[strategy(nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert!((p + q).is_nan());
-            assert!((q + p).is_nan());
-        }
+        assert!((p + q).is_nan());
+        assert!((q + p).is_nan());
     }
 }

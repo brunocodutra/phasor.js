@@ -16,43 +16,50 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use approx::assert_ulps_eq;
-    use proptest::prelude::*;
+    use test_strategy::proptest;
 
-    proptest! {
-        #[test]
-        fn is_never_negative(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert!(!p.norm().is_sign_negative());
-        }
+    #[proptest]
+    fn is_never_negative(#[strategy(not_nan())] mag: f64, #[strategy(not_nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(!p.norm().is_sign_negative());
+    }
 
-        #[test]
-        fn equals_modulus_of_magnitude(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.norm(), mag.abs());
-        }
+    #[proptest]
+    fn equals_modulus_of_magnitude(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.norm(), mag.abs());
+    }
 
-        #[test]
-        fn equals_modulus_of_real_part_if_phasor_is_real(mag in not_nan(), tan in zero()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.norm(), p.real().abs());
-        }
+    #[proptest]
+    fn equals_modulus_of_real_part_if_phasor_is_real(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(zero())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.norm(), p.real().abs());
+    }
 
-        #[test]
-        fn equals_modulus_of_imaginary_part_if_imaginary(mag in not_nan(), tan in infinite()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.norm(), p.imag().abs());
-        }
+    #[proptest]
+    fn equals_modulus_of_imaginary_part_if_imaginary(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(infinite())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.norm(), p.imag().abs());
+    }
 
-        #[test]
-        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any()) {
-            let p = Phasor { mag, tan };
-            assert!(p.norm().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_magnitude_is_nan(#[strategy(nan())] mag: f64, #[strategy(any())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(p.norm().is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan()) {
-            let p = Phasor { mag, tan };
-            assert!(p.norm().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_tangent_is_nan(#[strategy(any())] mag: f64, #[strategy(nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(p.norm().is_nan());
     }
 }
