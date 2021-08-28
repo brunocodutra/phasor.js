@@ -17,37 +17,38 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use approx::assert_ulps_eq;
-    use proptest::prelude::*;
+    use test_strategy::proptest;
 
-    proptest! {
-        #[test]
-        fn negates_real_part(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.neg().real(), -p.real());
-        }
+    #[proptest]
+    fn negates_real_part(#[strategy(not_nan())] mag: f64, #[strategy(not_nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.neg().real(), -p.real());
+    }
 
-        #[test]
-        fn negates_imaginary_part(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.neg().imag(), -p.imag());
-        }
+    #[proptest]
+    fn negates_imaginary_part(#[strategy(not_nan())] mag: f64, #[strategy(not_nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.neg().imag(), -p.imag());
+    }
 
-        #[test]
-        fn is_its_own_inverse_function(mag in not_nan(), tan in not_nan()) {
-            let p = Phasor { mag, tan };
-            assert_ulps_eq!(p.neg().neg(), p);
-        }
+    #[proptest]
+    fn is_its_own_inverse_function(
+        #[strategy(not_nan())] mag: f64,
+        #[strategy(not_nan())] tan: f64,
+    ) {
+        let p = Phasor { mag, tan };
+        assert_ulps_eq!(p.neg().neg(), p);
+    }
 
-        #[test]
-        fn is_nan_if_magnitude_is_nan(mag in nan(), tan in any()) {
-            let p = Phasor { mag, tan };
-            assert!(p.neg().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_magnitude_is_nan(#[strategy(nan())] mag: f64, #[strategy(any())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(p.neg().is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_tangent_is_nan(mag in any(), tan in nan()) {
-            let p = Phasor { mag, tan };
-            assert!(p.neg().is_nan());
-        }
+    #[proptest]
+    fn is_nan_if_tangent_is_nan(#[strategy(any())] mag: f64, #[strategy(nan())] tan: f64) {
+        let p = Phasor { mag, tan };
+        assert!(p.neg().is_nan());
     }
 }

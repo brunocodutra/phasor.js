@@ -20,89 +20,154 @@ mod tests {
     use super::*;
     use crate::arbitrary::{any, *};
     use approx::assert_ulps_eq;
-    use proptest::prelude::*;
+    use proptest::prop_assume;
     use std::num::FpCategory::{Infinite, Zero};
+    use test_strategy::proptest;
 
-    proptest! {
-        #[test]
-        fn is_anti_commutative(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
-            prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
+    #[proptest]
+    fn is_anti_commutative(
+        #[strategy(not_nan())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(not_nan())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        prop_assume!(!matches!(
+            (a.classify(), c.classify()),
+            (Zero, Zero) | (Infinite, Infinite)
+        ));
 
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert_ulps_eq!(p / q, (q / p).recip());
-        }
+        assert_ulps_eq!(p / q, (q / p).recip());
+    }
 
-        #[test]
-        fn has_norm_equal_to_ratio_of_norms(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
-            prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
+    #[proptest]
+    fn has_norm_equal_to_ratio_of_norms(
+        #[strategy(not_nan())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(not_nan())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        prop_assume!(!matches!(
+            (a.classify(), c.classify()),
+            (Zero, Zero) | (Infinite, Infinite)
+        ));
 
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert_ulps_eq!((p / q).norm(), p.norm() / q.norm());
-            assert_ulps_eq!((q / p).norm(), q.norm() / p.norm());
-        }
+        assert_ulps_eq!((p / q).norm(), p.norm() / q.norm());
+        assert_ulps_eq!((q / p).norm(), q.norm() / p.norm());
+    }
 
-        #[test]
-        fn has_angle_equal_to_subtraction_of_angles(a in not_nan(), b in not_nan(), c in not_nan(), d in not_nan()) {
-            prop_assume!(!matches!((a.classify(), c.classify()), (Zero, Zero) | (Infinite, Infinite)));
+    #[proptest]
+    fn has_angle_equal_to_subtraction_of_angles(
+        #[strategy(not_nan())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(not_nan())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        prop_assume!(!matches!(
+            (a.classify(), c.classify()),
+            (Zero, Zero) | (Infinite, Infinite)
+        ));
 
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            let v = p.angle() - q.angle();
+        let v = p.angle() - q.angle();
 
-            assert_ulps_eq!((p / q).angle().cos(), v.cos(), epsilon = 8f64 * f64::EPSILON);
-            assert_ulps_eq!((p / q).angle().sin(), v.sin(), epsilon = 8f64 * f64::EPSILON);
+        assert_ulps_eq!(
+            (p / q).angle().cos(),
+            v.cos(),
+            epsilon = 8f64 * f64::EPSILON
+        );
+        assert_ulps_eq!(
+            (p / q).angle().sin(),
+            v.sin(),
+            epsilon = 8f64 * f64::EPSILON
+        );
 
-            assert_ulps_eq!((q / p).angle().cos(), v.cos(), epsilon = 8f64 * f64::EPSILON);
-            assert_ulps_eq!((q / p).angle().sin(), -v.sin(), epsilon = 8f64 * f64::EPSILON);
-        }
+        assert_ulps_eq!(
+            (q / p).angle().cos(),
+            v.cos(),
+            epsilon = 8f64 * f64::EPSILON
+        );
+        assert_ulps_eq!(
+            (q / p).angle().sin(),
+            -v.sin(),
+            epsilon = 8f64 * f64::EPSILON
+        );
+    }
 
-        #[test]
-        fn equals_one_if_phasors_are_equal(a in regular(), b in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let r = Phasor { mag: 1f64, tan: 0f64 };
+    #[proptest]
+    fn equals_one_if_phasors_are_equal(
+        #[strategy(regular())] a: f64,
+        #[strategy(not_nan())] b: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let r = Phasor {
+            mag: 1f64,
+            tan: 0f64,
+        };
 
-            assert_ulps_eq!(p / p, r);
-        }
+        assert_ulps_eq!(p / p, r);
+    }
 
-        #[test]
-        fn is_nan_if_phasors_are_infinite(a in infinite(), b in not_nan(), c in infinite(), d in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_nan_if_phasors_are_infinite(
+        #[strategy(infinite())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(infinite())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert!((p / q).is_nan());
-            assert!((q / p).is_nan());
-        }
+        assert!((p / q).is_nan());
+        assert!((q / p).is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_phasors_are_zero(a in zero(), b in not_nan(), c in zero(), d in not_nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_nan_if_phasors_are_zero(
+        #[strategy(zero())] a: f64,
+        #[strategy(not_nan())] b: f64,
+        #[strategy(zero())] c: f64,
+        #[strategy(not_nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert!((p / q).is_nan());
-            assert!((q / p).is_nan());
-        }
+        assert!((p / q).is_nan());
+        assert!((q / p).is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_magnitude_is_nan(a in any(), b in any(), c in nan(), d in any()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_nan_if_magnitude_is_nan(
+        #[strategy(any())] a: f64,
+        #[strategy(any())] b: f64,
+        #[strategy(nan())] c: f64,
+        #[strategy(any())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert!((p / q).is_nan());
-            assert!((q / p).is_nan());
-        }
+        assert!((p / q).is_nan());
+        assert!((q / p).is_nan());
+    }
 
-        #[test]
-        fn is_nan_if_tangent_is_nan(a in any(), b in any(), c in any(), d in nan()) {
-            let p = Phasor { mag: a, tan: b };
-            let q = Phasor { mag: c, tan: d };
+    #[proptest]
+    fn is_nan_if_tangent_is_nan(
+        #[strategy(any())] a: f64,
+        #[strategy(any())] b: f64,
+        #[strategy(any())] c: f64,
+        #[strategy(nan())] d: f64,
+    ) {
+        let p = Phasor { mag: a, tan: b };
+        let q = Phasor { mag: c, tan: d };
 
-            assert!((p / q).is_nan());
-            assert!((q / p).is_nan());
-        }
+        assert!((p / q).is_nan());
+        assert!((q / p).is_nan());
     }
 }
