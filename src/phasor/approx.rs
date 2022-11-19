@@ -180,7 +180,7 @@ mod tests {
     }
 
     #[proptest]
-    fn relative_eq_rotated(#[strategy(not_nan())] mag: f64, #[strategy(regular())] tan: f64) {
+    fn relative_eq_rotated(#[strategy(not_nan())] mag: f64, #[strategy(normal())] tan: f64) {
         let p = Phasor {
             mag,
             tan: tan * 1.0000000001,
