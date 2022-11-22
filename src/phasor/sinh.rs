@@ -1,6 +1,10 @@
 use super::Phasor;
 use std::num::FpCategory::Zero;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
     pub fn sinh(self) -> Self {
         let re = self.real();

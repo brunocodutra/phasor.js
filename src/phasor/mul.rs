@@ -2,6 +2,9 @@ use super::Phasor;
 use crate::trig::tanaddatan;
 use std::ops::Mul;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Mul for Phasor {
     type Output = Self;
 
@@ -12,6 +15,14 @@ impl Mul for Phasor {
             mag: self.mag * rhs.mag * c.signum(),
             tan: s / c,
         }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl Phasor {
+    pub fn mul(&self, rhs: &Phasor) -> Phasor {
+        std::ops::Mul::mul(*self, *rhs)
     }
 }
 

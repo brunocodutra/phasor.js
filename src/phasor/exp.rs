@@ -1,5 +1,9 @@
 use super::Phasor;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
     pub fn exp(self) -> Self {
         Phasor::polar(self.real().exp(), self.imag())

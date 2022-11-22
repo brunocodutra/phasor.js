@@ -2,6 +2,9 @@ use super::Phasor;
 use crate::trig::tansubatan;
 use std::ops::Div;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Div for Phasor {
     type Output = Self;
 
@@ -12,6 +15,14 @@ impl Div for Phasor {
             mag: self.mag / rhs.mag / c.signum(),
             tan: s / c,
         }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl Phasor {
+    pub fn div(&self, rhs: &Phasor) -> Phasor {
+        std::ops::Div::div(*self, *rhs)
     }
 }
 

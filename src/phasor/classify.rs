@@ -1,6 +1,9 @@
 use super::Phasor;
 use std::num::FpCategory;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Phasor {
     pub fn classify(&self) -> FpCategory {
         if self.tan.is_nan() {
@@ -11,35 +14,44 @@ impl Phasor {
     }
 }
 
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isNaN"))]
     pub fn is_nan(&self) -> bool {
         self.classify() == FpCategory::Nan
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isInfinite"))]
     pub fn is_infinite(&self) -> bool {
         self.classify() == FpCategory::Infinite
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isFinite"))]
     pub fn is_finite(&self) -> bool {
         !matches!(self.classify(), FpCategory::Infinite | FpCategory::Nan)
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isZero"))]
     pub fn is_zero(&self) -> bool {
         self.classify() == FpCategory::Zero
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isSubnormal"))]
     pub fn is_subnormal(&self) -> bool {
         self.classify() == FpCategory::Subnormal
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isNormal"))]
     pub fn is_normal(&self) -> bool {
         self.classify() == FpCategory::Normal
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isReal"))]
     pub fn is_real(&self) -> bool {
         self.tan.classify() == FpCategory::Zero && self.mag.classify() != FpCategory::Nan
     }
 
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen(js_name = "isImaginary"))]
     pub fn is_imaginary(&self) -> bool {
         self.tan.classify() == FpCategory::Infinite && self.mag.classify() != FpCategory::Nan
     }

@@ -1,5 +1,8 @@
 use super::Phasor;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Phasor {
     pub fn polar(mag: f64, angle: f64) -> Self {
         Phasor {
@@ -7,6 +10,12 @@ impl Phasor {
             tan: angle.tan(),
         }
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn polar(mag: f64, angle: Option<f64>) -> Phasor {
+    Phasor::polar(mag, angle.unwrap_or(0f64))
 }
 
 #[cfg(test)]

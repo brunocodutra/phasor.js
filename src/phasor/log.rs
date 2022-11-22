@@ -1,5 +1,9 @@
 use super::Phasor;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
     pub fn log(self, base: f64) -> Self {
         self.ln() / Phasor::polar(base.ln(), 0f64)

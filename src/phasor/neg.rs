@@ -1,6 +1,9 @@
 use super::Phasor;
 use std::ops::Neg;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Neg for Phasor {
     type Output = Self;
 
@@ -9,6 +12,14 @@ impl Neg for Phasor {
             mag: -self.mag,
             tan: self.tan,
         }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl Phasor {
+    pub fn neg(&self) -> Phasor {
+        std::ops::Neg::neg(*self)
     }
 }
 
