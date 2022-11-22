@@ -1,5 +1,9 @@
 use crate::{trig::cosatan, Phasor};
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl Phasor {
     pub fn real(&self) -> f64 {
         let c = cosatan(self.tan);

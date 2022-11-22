@@ -1,11 +1,22 @@
 use super::Phasor;
 use std::ops::Sub;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Sub for Phasor {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
         self + (-rhs)
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl Phasor {
+    pub fn sub(&self, rhs: &Phasor) -> Phasor {
+        std::ops::Sub::sub(*self, *rhs)
     }
 }
 

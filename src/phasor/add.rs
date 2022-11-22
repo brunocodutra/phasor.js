@@ -2,6 +2,9 @@ use super::Phasor;
 use crate::trig::{cosatan, cosatan2, sinatan, sinatan2};
 use std::{num::FpCategory::Zero, ops::Add};
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Add for Phasor {
     type Output = Self;
 
@@ -30,6 +33,14 @@ impl Add for Phasor {
                 -self.tan.recip()
             },
         }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl Phasor {
+    pub fn add(&self, rhs: &Phasor) -> Phasor {
+        std::ops::Add::add(*self, *rhs)
     }
 }
 

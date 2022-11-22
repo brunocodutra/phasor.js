@@ -2,6 +2,9 @@ use super::Phasor;
 use crate::trig::{cosatan, sinatan};
 use ::approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 fn eq(p: &Phasor, q: &Phasor, cmp: impl Fn(f64, f64) -> bool) -> bool {
     let sign = p.mag.signum() * q.mag.signum();
     let (sp, cp) = (sinatan(p.tan), cosatan(p.tan));
@@ -39,6 +42,36 @@ impl UlpsEq for Phasor {
 
     fn ulps_eq(&self, other: &Self, e: Self::Epsilon, max: u32) -> bool {
         eq(self, other, move |x, y| x.ulps_eq(&y, e, max))
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+impl Phasor {
+    #[wasm_bindgen(js_name = "absDiffEq")]
+    pub fn abs_diff_eq(&self, rhs: &Phasor, e: Option<f64>) -> bool {
+        AbsDiffEq::abs_diff_eq(self, rhs, e.unwrap_or_else(Self::default_epsilon))
+    }
+
+    #[wasm_bindgen(js_name = "relativeEq")]
+    pub fn relative_eq(&self, rhs: &Phasor, e: Option<f64>, rel: Option<f64>) -> bool {
+        RelativeEq::relative_eq(
+            self,
+            rhs,
+            e.unwrap_or_else(Self::default_epsilon),
+            rel.unwrap_or_else(super::Phasor::default_max_relative),
+        )
+    }
+
+    #[wasm_bindgen(js_name = "ulpsEq")]
+    pub fn ulps_eq(&self, rhs: &Phasor, e: Option<f64>, ulps: Option<f64>) -> bool {
+        UlpsEq::ulps_eq(
+            self,
+            rhs,
+            e.unwrap_or_else(Self::default_epsilon),
+            ulps.map(|u| u.max(0f64).min(u32::MAX as f64) as u32)
+                .unwrap_or_else(Self::default_max_ulps),
+        )
     }
 }
 

@@ -1,6 +1,9 @@
 use super::Phasor;
 use std::num::FpCategory;
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 impl Phasor {
     pub fn rect(re: f64, im: f64) -> Self {
         Phasor {
@@ -13,6 +16,12 @@ impl Phasor {
             },
         }
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn rect(re: f64, im: Option<f64>) -> Phasor {
+    Phasor::rect(re, im.unwrap_or(0f64))
 }
 
 #[cfg(test)]
