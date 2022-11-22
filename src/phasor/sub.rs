@@ -136,8 +136,8 @@ mod tests {
 
         prop_assume!(!p.is_infinite() || !p.is_real());
 
-        assert_ulps_eq!(p - q, r, max_ulps = 40);
-        assert_ulps_eq!(q - p, -r, max_ulps = 40);
+        assert_ulps_eq!(p - q, r, max_ulps = 80);
+        assert_ulps_eq!(q - p, -r, max_ulps = 80);
     }
 
     #[proptest]
